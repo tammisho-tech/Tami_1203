@@ -49,18 +49,21 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS — allow React dev server
+# CORS — allow React dev server + Railway production (same-origin in prod, so * is safe)
+import os as _os
+_cors_origins = [
+    "http://localhost:5173", "http://localhost:5174", "http://localhost:5175",
+    "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:5174", "http://127.0.0.1:5175",
+]
+if _os.environ.get("RAILWAY_PUBLIC_DOMAIN"):
+    _dom = _os.environ["RAILWAY_PUBLIC_DOMAIN"]
+    _cors_origins.extend([f"https://{_dom}", f"http://{_dom}"])
+# In production (Railway), allow all — frontend is same-origin
+if _os.environ.get("RAILWAY_ENVIRONMENT"):
+    _cors_origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",
-        "http://localhost:3000",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:5174",
-        "http://127.0.0.1:5175",
-    ],
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

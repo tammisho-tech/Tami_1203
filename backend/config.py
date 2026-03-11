@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 from pydantic_settings import BaseSettings
 
 
@@ -61,6 +62,14 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         extra = "ignore"
+
+
+def get_database_url() -> str:
+    """Convert Railway PostgreSQL URL to asyncpg format if needed."""
+    url = os.environ.get("DATABASE_URL", settings.database_url)
+    if url.startswith("postgresql://"):
+        return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    return url
 
 
 settings = Settings()

@@ -9,7 +9,7 @@ from sqlalchemy.orm import DeclarativeBase, relationship
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 import enum
 
-from config import settings
+from config import settings, get_database_url
 
 
 class Base(DeclarativeBase):
@@ -248,7 +248,7 @@ class ChatMessage(Base):
 
 # ─── DB Setup ─────────────────────────────────────────────────────────────────
 
-engine = create_async_engine(settings.database_url, echo=False)
+engine = create_async_engine(get_database_url(), echo=False)
 AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
