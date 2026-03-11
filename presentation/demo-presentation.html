@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>TAMI — מצגת מלאה</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Rubik', Arial, sans-serif; background: #f3f4f6; color: #1f2937; overflow: hidden; height: 100vh; }
+    .slide { position: absolute; inset: 0; display: none; flex-direction: column; overflow-y: auto; }
+    .slide.active { display: flex; z-index: 1; }
+    .app-frame { flex: 1; max-width: 920px; margin: 0 auto; width: 100%; padding: 1rem 1.5rem 5rem; }
+    .workflow { display: flex; align-items: center; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap; }
+    .workflow span { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
+    .workflow .done { background: #16a34a; color: white; }
+    .workflow .active { background: #2563eb; color: white; }
+    .workflow .pending { background: #f3f4f6; color: #9ca3af; }
+    .workflow .conn { width: 16px; height: 1px; background: #e5e7eb; }
+    .workflow .conn-done { background: #4ade80; }
+    .card { background: white; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+    .card-title { font-size: 14px; font-weight: 700; color: #1e40af; margin-bottom: 0.5rem; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .badge-blue { background: #dbeafe; color: #1d4ed8; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; }
+    .badge-amber { background: #fef3c7; color: #92400e; }
+    .text-block { background: #fafbfc; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 1.25rem 1.5rem; line-height: 2; font-size: 15px; color: #1a1a2e; }
+    .text-block p { margin-bottom: 1em; }
+    .text-block p:last-child { margin-bottom: 0; }
+    .nc-grid { display: grid; grid-template-columns: 1fr 32%; gap: 1.25rem; direction: rtl; }
+    .nc-sidebar { background: #fffbeb; border: 2px dashed #f59e0b; border-radius: 12px; padding: 1rem 1.2rem; font-size: 13px; line-height: 1.8; }
+    .nc-sidebar-title { font-weight: 800; color: #92400e; margin-bottom: 0.5rem; padding-bottom: 0.4rem; border-bottom: 1px solid #fcd34d; }
+    .q-card { background: white; border: 1.5px solid rgba(34,197,94,0.3); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; box-shadow: 0 2px 8px rgba(34,197,94,0.08); }
+    .q-num { width: 28px; height: 28px; background: linear-gradient(135deg,#22c55e,#16a34a); color: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; margin-left: 8px; }
+    .q-stem { font-size: 14px; line-height: 1.8; }
+    .q-pts { font-size: 11px; color: #9ca3af; margin-top: 6px; }
+    .btn { padding: 8px 16px; border-radius: 10px; font-weight: 600; font-size: 13px; border: none; cursor: pointer; }
+    .btn-primary { background: linear-gradient(135deg,#2563eb,#7c3aed); color: white; }
+    .btn-secondary { background: #e5e7eb; color: #4b5563; }
+    .improve-box { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 10px; padding: 0.8rem 1rem; font-size: 13px; margin-bottom: 0.5rem; }
+    .ling-change { background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 0.5rem; font-size: 13px; }
+    .ling-change .corrected { color: #15803d; font-weight: 600; }
+    .nav-buttons { position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); display: flex; gap: 1rem; z-index: 100; }
+    .nav-btn { padding: 0.6rem 1.5rem; font-size: 1rem; font-weight: 700; font-family: 'Rubik', Arial, sans-serif; border: none; border-radius: 12px; cursor: pointer; background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; }
+    .nav-btn-prev { background: #e5e7eb; color: #4b5563; }
+    .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .slide-label { position: fixed; bottom: 3.5rem; left: 50%; transform: translateX(-50%); font-size: 12px; color: #9ca3af; z-index: 99; }
+  </style>
+</head>
+<body>
+
+<!-- 1: פתיחה — פרטים, כיתה ז, בינה מלאכותית, שוויון הזדמנויות -->
+<div class="slide active" data-idx="0">
+  <div class="app-frame">
+    <div class="workflow">
+      <span class="active">1 פתיחה</span>
+      <div class="conn"></div><span class="pending">2 תכנון</span>
+      <div class="conn"></div><span class="pending">3 טקסטים</span>
+      <div class="conn"></div><span class="pending">4 שאלות</span>
+      <div class="conn"></div><span class="pending">5 עיצוב ופרסום</span>
+    </div>
+    <h1 style="font-size:1.5rem;margin-bottom:1rem;">מבחן חדש — הבנת הנקרא</h1>
+    <div class="card">
+      <div class="card-title">פרטים אישיים</div>
+      <p><strong>שם המורה:</strong> _____________</p>
+      <p><strong>בית ספר:</strong> _____________</p>
+    </div>
+    <div class="card">
+      <div class="card-title">פרטי המבחן</div>
+      <p><strong>כיתה:</strong> <span class="badge badge-blue">ז'–ט'</span> (כיתה ז')</p>
+      <p><strong>מועד:</strong> <span class="badge badge-green">סמסטר א'</span></p>
+      <p><strong>נושא:</strong> בינה מלאכותית ועתיד האנושות: מי שולט</p>
+      <p><strong>ערך נבחר:</strong> שוויון הזדמנויות</p>
+    </div>
+    <button class="btn btn-primary">המשך לתכנון ←</button>
+  </div>
+  <span class="slide-label">מסך 1: פתיחה — השלמת פרטים, בחירת נושא וערכים</span>
+</div>
+
+<!-- 2: תכנון — תמה ורעיונות -->
+<div class="slide" data-idx="1">
+  <div class="app-frame">
+    <div class="workflow">
+      <span class="done">1 פתיחה</span><div class="conn conn-done"></div>
+      <span class="active">2 תכנון</span>
+      <div class="conn"></div><span class="pending">3 טקסטים</span>
+      <div class="conn"></div><span class="pending">4 שאלות</span>
+      <div class="conn"></div><span class="pending">5 עיצוב ופרסום</span>
+    </div>
+    <h1 style="font-size:1.5rem;margin-bottom:1rem;">תכנון — תמה ורעיונות</h1>
+    <div class="card">
+      <div class="card-title">תמה משותפת</div>
+      <p><strong>בינה מלאכותית ככלי לשוויון הזדמנויות</strong></p>
+      <p style="font-size:13px;color:#6b7280;">הבינה המלאכותית יכולה לצמצם פערים — אם נדאג שכל תלמיד יקבל גישה אליה. הסיפור והמאמר מחזקים את המסר: הטכנולוגיה צריכה לשרת את כולם.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📖 רעיון לטקסט נרטיבי</div>
+      <p><strong>כותרת:</strong> "המחשב של נועה"</p>
+      <p><strong>תקציר:</strong> נועה, תלמידה מפריפריה, מקבלת לראשונה גישה לתוכנת למידה מבוססת בינה מלאכותית. בהתחלה היא חוששת — "זה לא בשבילי." המורה מעודדת. נועה מתמידה. בתוך חודש — שיפור משמעותי. היא מבינה: ההזדמנות הייתה שם. רק צריך היה לפתוח את הדלת.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📄 רעיון לטקסט מידעי</div>
+      <p><strong>נושא:</strong> בינה מלאכותית בחינוך — הזדמנות או פער?</p>
+      <p><strong>מבנה:</strong> בעיה (פער דיגיטלי) → פתרון (כלים חינמיים) → אתגר (שימוש נכון)</p>
+      <p><strong>תקציר:</strong> מחקרים מראים: תלמידים עם גישה לכלי בינה מלאכותית משתפרים יותר. אבל — לא כולם מקבלים גישה. הפתרון: תוכנות חינמיות ופרויקטים בפריפריה. המסר: שוויון הזדמנויות דורש פעולה.</p>
+    </div>
+    <button class="btn btn-primary">אישור והמשך לטקסטים ←</button>
+  </div>
+  <span class="slide-label">מסך 2: תכנון — תמה ורעיונות לטקסטים</span>
+</div>
+
+<!-- 3: שיפור רעיון/תמה -->
+<div class="slide" data-idx="2">
+  <div class="app-frame">
+    <div class="workflow">
+      <span class="done">1 פתיחה</span><div class="conn conn-done"></div>
+      <span class="done">2 תכנון</span><div class="conn conn-done"></div>
+      <span class="active">3 טקסטים</span>
+      <div class="conn"></div><span class="pending">4 שאלות</span>
+      <div class="conn"></div><span class="pending">5 עיצוב ופרסום</span>
+    </div>
+    <h1 style="font-size:1.5rem;margin-bottom:1rem;">שיפור רכיבים — הצעות לבינה</h1>
+    <div class="card">
+      <div class="card-title">הצעות שיפור לרעיון הנרטיבי</div>
+      <div class="improve-box">1. [פסקה 1] הוסף רגע של חשש קונקרטי — למשל נועה רואה את החברות שלה משתמשות בתוכנה והיא מרגישה "מאחור".</div>
+      <div class="improve-box">2. [מסר] חזקי את הקשר בין הגישה לטכנולוגיה לבין שוויון — "המחשב לא היה רק כלי. הוא היה הזדמנות."</div>
+    </div>
+    <div class="card">
+      <div class="card-title">הצעות שיפור לרעיון המידעי</div>
+      <div class="improve-box">1. [מבנה] הוסיפי נתון מחקר ספציפי — למשל "בבתי ספר בפריפריה שהכניסו כלי בינה מלאכותית, הציונים עלו ב־25%."</div>
+      <div class="improve-box">2. [תוכן] הדגישי את הסיכון: מי שאין לו גישה — נשאר מאחור. זה מחזק את ערך שוויון ההזדמנויות.</div>
+    </div>
+    <button class="btn btn-secondary">התעלמי</button>
+    <button class="btn btn-primary">יישם והמשך ←</button>
+  </div>
+  <span class="slide-label">מסך 3: שיפור רעיון ותמה</span>
+</div>
+
+<!-- 4: טקסט נרטיבי מלא -->
+<div class="slide" data-idx="3">
+  <div class="app-frame">
+    <div class="workflow">
+      <span class="done">1 פתיחה</span><div class="conn conn-done"></div>
+      <span class="done">2 תכנון</span><div class="conn conn-done"></div>
+      <span class="active">3 טקסטים</span>
+      <div class="conn"></div><span class="pending">4 שאלות</span>
+      <div class="conn"></div><span class="pending">5 עיצוב ופרסום</span>
+    </div>
+    <h1 style="font-size:1.5rem;margin-bottom:1rem;">טקסט נרטיבי — "המחשב של נועה"</h1>
+    <div class="card">
+      <div class="text-block">
+        <p>נועה ראתה את החברות שלה מקלידות שאלות לתוכנה החכמה ומקבלות תשובות מיד. "זה לא בשבילי," חשבה. "אצלנו בבית אין מחשב כזה."</p>
+        <p>בבית הספר, המורה רונית הכריזה: "מעכשיו — כל תלמיד יקבל גישה לתוכנת למידה מבוססת בינה מלאכותית. חינם." נועה הרימה יד. "אבל אני לא יודעת איך משתמשים." רונית חייכה. "נתחיל ביחד."</p>
+        <p>בשבוע הראשון נועה כמעט ויתרה. המסך נראה מסובך. אבל רונית ישבה איתה כל יום רבע שעה. "תנסי לשאול אותה שאלה אחת. רק אחת." נועה שאלה. קיבלה תשובה. שאלה שוב.</p>
+        <p>כעבור חודש, הציון של נועה במתמטיקה עלה מ־65 ל־82. "המחשב לא היה רק כלי," אמרה נועה לרונית. "הוא היה הזדמנות. עד שלא פתחתי את הדלת — לא ידעתי שיש מה לפתוח."</p>
+      </div>
+    </div>
+    <button class="btn btn-secondary">שיפור רכיבים</button>
+    <button class="btn btn-primary">המשך לטקסט המידעי ←</button>
+  </div>
+  <span class="slide-label">מסך 4: טקסט נרטיבי מלא</span>
+</div>
+
+<!-- 5: טקסט מידעי מלא + תיבת מידע -->
+<div class="slide" data-idx="4">
+  <div class="app-frame">
+    <div class="workflow">
+      <span class="done">1 פתיחה</span><div class="conn conn-done"></div>
+      <span class="done">2 תכנון</span><div class="conn conn-done"></div>
+      <span class="active">3 טקסטים</span>
+      <div class="conn"></div><span class="pending">4 שאלות</span>
+      <div class="conn"></div><span class="pending">5 עיצוב ופרסום</span>
+    </div>
+    <h1 style="font-size:1.5rem;margin-bottom:1rem;">טקסט מידעי — בינה מלאכותית בחינוך</h1>
+    <div class="card">
+      <div class="nc-grid">
+        <div>
+          <div class="text-block">
+            <p>מחקרים מראים: תלמידים עם גישה לכלי בינה מלאכותית ללמידה — משתפרים בציונים ובהבנה. אבל לא כולם מקבלים גישה. הפער הדיגיטלי — בין מי שיש לו מחשב ואינטרנט לבין מי שאין — יוצר אי־שוויון הזדמנויות.</p>
+            <p>הפתרון: תוכנות חינמיות ופרויקטים שמביאים טכנולוגיה לפריפריה. בבתי ספר שהכניסו כלי בינה מלאכותית לכל התלמידים, הציונים עלו בממוצע. המפתח — לא רק הטכנולוגיה, אלא הנגישות אליה.</p>
+            <p>המסקנה: שוויון הזדמנויות בעידן הבינה המלאכותית דורש פעולה. כל תלמיד, מכל רקע, צריך לקבל את הכלים. אחרת — הפער רק יגדל.</p>
+          </div>
+        </div>
+        <div>
+          <div class="nc-sidebar">
+            <div class="nc-sidebar-title">⭐ ידעת?</div>
+            <p>בבתי ספר בפריפריה שהכניסו כלי בינה מלאכותית, הציונים במתמטיקה עלו ב־25% בממוצע (מחקר משרד החינוך, 2024).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary">המשך לשאלות ←</button>
+  </div>
+  <span class="slide-label">מסך 5: טקסט מידעי מלא עם רכיב נלווה</span>
+</div>
+
+<!-- 6: שאלות -->
+<div class="slide" data-idx="5">
+  <div class="app-frame">
+    <div class="workflow">
+      <span class="done">1 פתיחה</span><div class="conn conn-done"></div>
+      <span class="done">2 תכנון</span><div class="conn conn-done"></div>
+      <span class="done">3 טקסטים</span><div class="conn conn-done"></div>
+      <span class="active">4 שאלות</span>
+      <div class="conn"></div><span class="pending">5 עיצוב ופרסום</span>
+    </div>
+    <h1 style="font-size:1.5rem;margin-bottom:1rem;">שאלות — התאמה לרמות חשיבה</h1>
+    <div class="q-card">
+      <span class="q-num">1</span>
+      <span class="q-stem">מה הייתה התגובה הראשונה של נועה כשראתה את החברות משתמשות בתוכנה? <span class="badge badge-blue">איתור מידע</span></span>
+      <div class="q-pts">(2 נקודות)</div>
+    </div>
+    <div class="q-card">
+      <span class="q-num">2</span>
+      <span class="q-stem"><strong>נמקו</strong>: מדוע הגישה לתוכנה שינתה את המצב של נועה? <span class="badge badge-green">הסקה</span></span>
+      <div class="q-pts">(4 נקודות)</div>
+    </div>
+    <div class="q-card">
+      <span class="q-num">3</span>
+      <span class="q-stem">מהו "פער דיגיטלי" לפי הטקסט המידעי, וכיצד הוא משפיע על שוויון ההזדמנויות? <span class="badge badge-amber">פירוש</span></span>
+      <div class="q-pts">(4 נקודות)</div>
+    </div>
+    <div class="q-card">
+      <span class="q-num">4</span>
+      <span class="q-stem">שאלת מיזוג: כיצד הסיפור של נועה ממחיש את הממצאים במאמר על בינה מלאכותית בחינוך? <span class="badge badge-purple">חיבור שני הטקסטים</span></span>
+      <div class="q-pts">(6 נקודות)</div>
+    </div>
+    <button class="btn btn-primary">המשך לעריכה לשונית ←</button>
+  </div>
+  <span class="slide-label">מסך 6: שאלות — כמו במסך האפליקציה</span>
+</div>
+
+<!-- 7: עריכה לשונית -->
+<div class="slide" data-idx="6">
+  <div class="app-frame">
+    <div class="workflow">
+      <span class="done">1 פתיחה</span><div class="conn conn-done"></div>
+      <span class="done">2 תכנון</span><div class="conn conn-done"></div>
+      <span class="active">3 טקסטים</span>
+      <div class="conn"></div><span class="pending">4 שאלות</span>
+      <div class="conn"></div><span class="pending">5 עיצוב ופרסום</span>
+    </div>
+    <h1 style="font-size:1.5rem;margin-bottom:1rem;">עריכה לשונית — בדיקת כתיב, פיסוק וניסוח</h1>
+    <div class="card">
+      <div class="card-title">טקסט 1: המחשב של נועה — 2 תיקונים מוצעים</div>
+      <div class="ling-change">
+        <span class="badge badge-amber">כתיב</span> "תנסי" → <span class="corrected">תנסי</span> (השלמת יו"ד)
+      </div>
+      <div class="ling-change">
+        <span class="badge badge-blue">ניסוח</span> "עד שלא פתחתי את הדלת — לא ידעתי שיש מה לפתוח" → <span class="corrected">עד שלא פתחתי את הדלת, לא ידעתי שיש מה לפתוח</span> (משפט ברור יותר)
+      </div>
+      <div style="display:flex;gap:8px;margin-top:0.5rem;">
+        <button class="btn btn-secondary">דחי</button>
+        <button class="btn btn-primary">אשרי</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">טקסט 2: בינה מלאכותית בחינוך — 1 תיקון מוצע</div>
+      <div class="ling-change">
+        <span class="badge badge-amber">פיסוק</span> "הפער הדיגיטלי —" → <span class="corrected">הפער הדיגיטלי —</span> (מקף נכון)
+      </div>
+      <button class="btn btn-primary">אשרי והמשך לעיצוב ←</button>
+    </div>
+  </div>
+  <span class="slide-label">מסך 7: עריכה לשונית</span>
+</div>
+
+<!-- 8: עיצוב -->
+<div class="slide" data-idx="7">
+  <div class="app-frame">
+    <div class="workflow">
+      <span class="done">1 פתיחה</span><div class="conn conn-done"></div>
+      <span class="done">2 תכנון</span><div class="conn conn-done"></div>
+      <span class="done">3 טקסטים</span><div class="conn conn-done"></div>
+      <span class="done">4 שאלות</span><div class="conn conn-done"></div>
+      <span class="active">5 עיצוב ופרסום</span>
+    </div>
+    <h1 style="font-size:1.5rem;margin-bottom:1rem;">עיצוב גרפי — תצוגה מקדימה</h1>
+    <div class="card" style="background:linear-gradient(135deg,#2563eb,#7c3aed);color:white;padding:1.5rem;">
+      <p style="margin:0;font-size:1.1rem;font-weight:700;">מבחן הבנת הנקרא — בינה מלאכותית ושוויון הזדמנויות</p>
+      <p style="margin:0.3rem 0 0;font-size:12px;opacity:0.9;">כיתות ז'–ט' · סמסטר א'</p>
+    </div>
+    <div class="card">
+      <p style="font-size:13px;color:#6b7280;">תצוגת מורה: טקסט + שאלות זה לצד זה</p>
+      <p style="font-size:13px;color:#6b7280;">תצוגת תלמיד: טקסט צבעוני, שאלות עם אותיות א.ב.ג.ד</p>
+    </div>
+    <button class="btn btn-primary">המשך להורדת חומרים ←</button>
+  </div>
+  <span class="slide-label">מסך 8: עיצוב גרפי</span>
+</div>
+
+<!-- 9: הורדת חומרים -->
+<div class="slide" data-idx="8">
+  <div class="app-frame">
+    <div class="workflow">
+      <span class="done">1 פתיחה</span><div class="conn conn-done"></div>
+      <span class="done">2 תכנון</span><div class="conn conn-done"></div>
+      <span class="done">3 טקסטים</span><div class="conn conn-done"></div>
+      <span class="done">4 שאלות</span><div class="conn conn-done"></div>
+      <span class="active">5 עיצוב ופרסום</span>
+    </div>
+    <h1 style="font-size:1.5rem;margin-bottom:1rem;">הורדת חומרים ופרסום</h1>
+    <div class="card">
+      <div class="card-title">הורדות</div>
+      <p style="margin-bottom:0.8rem;">📖 <strong>חוברת טקסטים</strong> — מוכנה להדפסה</p>
+      <p style="margin-bottom:0.8rem;">📝 <strong>חוברת שאלות</strong> — עם שורות תשובה</p>
+      <p style="margin-bottom:0.8rem;">✅ <strong>מחוון בדיקה</strong> — למורה</p>
+      <p style="margin-bottom:0.8rem;">🔑 <strong>גרסת מורה</strong> — עם תשובות</p>
+    </div>
+    <div class="card">
+      <div class="card-title">קישור לתלמידים</div>
+      <p>קוד כניסה: <strong style="font-size:1.2rem;letter-spacing:2px;">TAMI-7A2</strong></p>
+      <p style="font-size:12px;color:#6b7280;">התלמידים נכנסים לאתר ומזינים את הקוד</p>
+    </div>
+    <button class="btn btn-primary">הורד PDF</button>
+    <button class="btn btn-secondary">העתק קוד</button>
+  </div>
+  <span class="slide-label">מסך 9: הורדת חומרים — סיום</span>
+</div>
+
+<div class="nav-buttons">
+  <button class="nav-btn nav-btn-prev" id="btnPrev">← הקודם</button>
+  <button class="nav-btn" id="btnNext">הבא →</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let idx = 0;
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  function show(i) {
+    idx = Math.max(0, Math.min(i, slides.length - 1));
+    slides.forEach((s, k) => s.classList.toggle('active', k === idx));
+    btnPrev.disabled = idx === 0;
+    btnNext.disabled = idx === slides.length - 1;
+  }
+  btnPrev.onclick = () => show(idx - 1);
+  btnNext.onclick = () => show(idx + 1);
+  show(0);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') show(idx - 1);
+    if (e.key === 'ArrowLeft' || e.key === ' ') { e.preventDefault(); show(idx + 1); }
+  });
+</script>
+</body>
+</html>

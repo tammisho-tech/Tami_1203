@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    direction: rtl;
+  }
+
+  body {
+    font-family: 'Rubik', 'Arial', sans-serif;
+    @apply bg-slate-50 text-gray-900;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  /* ─── RAMA Dimension badges ─────────────────────────── */
+  .dim-badge-A {
+    @apply bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs font-bold;
+  }
+  .dim-badge-B {
+    @apply bg-green-100 text-green-800 px-2 py-0.5 rounded text-xs font-bold;
+  }
+  .dim-badge-C {
+    @apply bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded text-xs font-bold;
+  }
+  .dim-badge-D {
+    @apply bg-pink-100 text-pink-800 px-2 py-0.5 rounded text-xs font-bold;
+  }
+
+  /* ─── Cards ─────────────────────────────────────────── */
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100 p-6;
+  }
+
+  /* ─── Buttons ───────────────────────────────────────── */
+  .btn-primary {
+    @apply text-white px-5 py-2.5 rounded-xl font-semibold text-sm
+           disabled:opacity-50 disabled:cursor-not-allowed transition-all inline-flex items-center gap-2;
+    background: linear-gradient(135deg, #1565C0, #2D3EA0);
+    box-shadow: 0 2px 8px rgba(21, 101, 192, 0.25);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1055A8, #242F88);
+    box-shadow: 0 4px 14px rgba(45, 62, 160, 0.4);
+    transform: translateY(-1px);
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    @apply bg-white text-gray-700 border border-gray-200 px-5 py-2.5 rounded-xl
+           font-semibold text-sm hover:bg-gray-50 hover:border-gray-300 transition-all
+           inline-flex items-center gap-2;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .btn-danger {
+    @apply bg-red-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm
+           hover:bg-red-700 transition-all inline-flex items-center gap-2;
+  }
+
+  /* ─── Inputs ─────────────────────────────────────────── */
+  .input-field {
+    @apply w-full border border-gray-200 rounded-xl px-4 py-2.5 text-right bg-white
+           focus:outline-none focus:ring-2 focus:border-transparent text-sm transition-all;
+    font-family: 'Rubik', sans-serif;
+    --tw-ring-color: #1565C0;
+  }
+  .input-field:focus {
+    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12);
+  }
+
+  .label {
+    @apply block text-sm font-semibold text-gray-600 mb-1.5;
+  }
+
+  /* ─── Page wrapper ───────────────────────────────────── */
+  .page-container {
+    @apply max-w-5xl mx-auto py-8 px-4 space-y-6;
+  }
+
+  /* ─── Section header ─────────────────────────────────── */
+  .section-header {
+    @apply flex items-center justify-between mb-4;
+  }
+
+  /* ─── RAMA gradient text ─────────────────────────────── */
+  .rama-text {
+    background: linear-gradient(135deg, #00B5CC, #1565C0, #2D3EA0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ─── Tab button ─────────────────────────────────────── */
+  .tab-btn {
+    @apply px-4 py-2 rounded-lg text-sm font-semibold transition-all;
+  }
+  .tab-btn-active {
+    @apply bg-white text-blue-700;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  .tab-btn-inactive {
+    @apply text-gray-500 hover:text-gray-700;
+  }
+}
