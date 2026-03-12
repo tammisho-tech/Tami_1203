@@ -1,7 +1,11 @@
 import axios from 'axios'
 
+// When deployed separately: VITE_API_URL = backend public URL (e.g. https://xxx.railway.app/api)
+// When same-origin: use relative /api
+const baseURL = import.meta.env.VITE_API_URL || '/api'
+
 const client = axios.create({
-  baseURL: '/api',
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
 })
 
