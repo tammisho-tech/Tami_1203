@@ -11,8 +11,12 @@ RUN npm run build
 FROM python:3.11-slim
 WORKDIR /app
 COPY backend/requirements.txt ./
-# Install packages (passlib/python-jose removed - OOM on Railway, unused in current code)
-RUN pip install --no-cache-dir -r requirements.txt
+# Install in small batches to avoid OOM (Railway free tier has limited build memory)
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir fastapi "uvicorn>=0.32.0" python-dotenv pydantic pydantic-settings
+RUN pip install --no-cache-dir sqlalchemy aiosqlite python-multipart jinja2 httpx
+RUN pip install --no-cache-dir anthropic python-docx
+RUN pip install --no-cache-dir asyncpg
 COPY backend/ ./
 COPY --from=frontend /app/frontend/dist ./../frontend/dist
 EXPOSE 8000
