@@ -6,6 +6,7 @@ backend/**/__pycache__/
 *.db
 *.log
 backend/.env
+.railway-token
 
 # Node
 frontend/node_modules/

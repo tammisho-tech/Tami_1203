@@ -1,0 +1,19 @@
+# Frontend only - React app (needs VITE_API_URL = backend URL at build time)
+ARG VITE_API_URL=
+
+FROM node:20-alpine AS builder
+WORKDIR /app
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY frontend-start.sh /frontend-start.sh
+RUN chmod +x /frontend-start.sh
+ENV PORT=8080
+EXPOSE 8080
+CMD ["/frontend-start.sh"]
