@@ -1,5 +1,6 @@
 #!/bin/sh
-PORT=${PORT:-8080}
+# Railway domain targets port 80
+PORT=${PORT:-80}
 cat > /etc/nginx/conf.d/default.conf << EOF
 server {
     listen ${PORT};
