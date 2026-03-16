@@ -21,7 +21,7 @@
 @layer components {
   /* ─── RAMA Dimension badges ─────────────────────────── */
   .dim-badge-A {
-    @apply bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs font-bold;
+    @apply bg-green-100 text-green-800 px-2 py-0.5 rounded text-xs font-bold;
   }
   .dim-badge-B {
     @apply bg-green-100 text-green-800 px-2 py-0.5 rounded text-xs font-bold;
@@ -42,12 +42,12 @@
   .btn-primary {
     @apply text-white px-5 py-2.5 rounded-xl font-semibold text-sm
            disabled:opacity-50 disabled:cursor-not-allowed transition-all inline-flex items-center gap-2;
-    background: linear-gradient(135deg, #1565C0, #2D3EA0);
-    box-shadow: 0 2px 8px rgba(21, 101, 192, 0.25);
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
   }
   .btn-primary:hover:not(:disabled) {
-    background: linear-gradient(135deg, #1055A8, #242F88);
-    box-shadow: 0 4px 14px rgba(45, 62, 160, 0.4);
+    background: linear-gradient(135deg, #15803d, #166534);
+    box-shadow: 0 4px 14px rgba(21, 128, 61, 0.4);
     transform: translateY(-1px);
   }
   .btn-primary:active:not(:disabled) {
@@ -71,10 +71,10 @@
     @apply w-full border border-gray-200 rounded-xl px-4 py-2.5 text-right bg-white
            focus:outline-none focus:ring-2 focus:border-transparent text-sm transition-all;
     font-family: 'Rubik', sans-serif;
-    --tw-ring-color: #1565C0;
+    --tw-ring-color: #16a34a;
   }
   .input-field:focus {
-    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12);
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
   }
 
   .label {
@@ -93,7 +93,7 @@
 
   /* ─── RAMA gradient text ─────────────────────────────── */
   .rama-text {
-    background: linear-gradient(135deg, #00B5CC, #1565C0, #2D3EA0);
+    background: linear-gradient(135deg, #22c55e, #16a34a, #15803d);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -104,7 +104,7 @@
     @apply px-4 py-2 rounded-lg text-sm font-semibold transition-all;
   }
   .tab-btn-active {
-    @apply bg-white text-blue-700;
+    @apply bg-white text-green-700;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   }
   .tab-btn-inactive {

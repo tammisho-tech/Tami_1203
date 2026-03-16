@@ -33,22 +33,22 @@ export const Button: React.FC<ButtonProps> = ({
         disabled={disabled || loading}
         className={`${base} text-white ${className}`}
         style={{
-          background: 'linear-gradient(135deg, #1565C0, #2D3EA0)',
-          boxShadow: '0 2px 8px rgba(21,101,192,0.25)',
+          background: 'linear-gradient(135deg, #16a34a, #15803d)',
+          boxShadow: '0 2px 8px rgba(22,163,74,0.25)',
           ...style,
         }}
         onMouseEnter={e => {
           if (!disabled && !loading) {
             const el = e.currentTarget
-            el.style.background = 'linear-gradient(135deg, #1055A8, #242F88)'
-            el.style.boxShadow = '0 4px 14px rgba(45,62,160,0.4)'
+            el.style.background = 'linear-gradient(135deg, #15803d, #166534)'
+            el.style.boxShadow = '0 4px 14px rgba(21,128,61,0.4)'
             el.style.transform = 'translateY(-1px)'
           }
         }}
         onMouseLeave={e => {
           const el = e.currentTarget
-          el.style.background = 'linear-gradient(135deg, #1565C0, #2D3EA0)'
-          el.style.boxShadow = '0 2px 8px rgba(21,101,192,0.25)'
+          el.style.background = 'linear-gradient(135deg, #16a34a, #15803d)'
+          el.style.boxShadow = '0 2px 8px rgba(22,163,74,0.25)'
           el.style.transform = ''
         }}
       >
@@ -133,7 +133,7 @@ export const DimensionBadge: React.FC<{ dim: string }> = ({ dim }) => {
 // ─── Spinner ──────────────────────────────────────────────────────────────────
 export const Spinner: React.FC<{ size?: number; text?: string }> = ({ size = 28, text }) => (
   <div className="flex flex-col items-center gap-3 py-10 text-gray-400">
-    <Loader2 size={size} className="animate-spin" style={{ color: '#1565C0' }} />
+    <Loader2 size={size} className="animate-spin" style={{ color: '#16a34a' }} />
     {text && <span className="text-sm font-medium text-gray-500">{text}</span>}
   </div>
 )
@@ -212,10 +212,10 @@ export const WorkflowSteps: React.FC<{ current: 1 | 2 | 3 | 4 | 5 }> = ({ curren
       const active = step.num === current
       return (
         <React.Fragment key={step.num}>
-          {i > 0 && <div className={`h-px w-4 ${done ? 'bg-green-400' : active ? 'bg-blue-300' : 'bg-gray-200'}`} />}
+          {i > 0 && <div className={`h-px w-4 ${done ? 'bg-green-400' : active ? 'bg-green-300' : 'bg-gray-200'}`} />}
           <span className={`px-2.5 py-1 rounded-full font-semibold ${
             done   ? 'bg-green-600 text-white' :
-            active ? 'bg-blue-600 text-white' :
+            active ? 'bg-green-600 text-white' :
                      'bg-gray-100 text-gray-400'
           }`}>
             {done ? `✓ ${step.label}` : `${step.num} ${step.label}`}
@@ -238,7 +238,7 @@ export const PageHeader: React.FC<{
 }> = ({ title, subtitle, grade, timing, teacher, actions }) => (
   <div
     className="rounded-2xl text-white p-5 mb-6 flex items-center justify-between gap-4"
-    style={{ background: 'linear-gradient(135deg, #1565C0 0%, #2D3EA0 100%)' }}
+    style={{ background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)' }}
   >
     <div className="space-y-1 min-w-0">
       <div className="flex items-center gap-2 flex-wrap">
@@ -254,8 +254,8 @@ export const PageHeader: React.FC<{
           </span>
         )}
       </div>
-      {teacher && <p className="text-blue-200 text-lg font-semibold">מורה: {teacher}</p>}
-      {subtitle && <p className="text-blue-200 text-sm">{subtitle}</p>}
+      {teacher && <p className="text-green-200 text-lg font-semibold">מורה: {teacher}</p>}
+      {subtitle && <p className="text-green-200 text-sm">{subtitle}</p>}
     </div>
     {actions && <div className="flex-shrink-0">{actions}</div>}
   </div>

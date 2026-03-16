@@ -150,7 +150,7 @@ export default function ExamComplete() {
           <button
             onClick={handleAnotherExam}
             disabled={feedbackMutation.isPending}
-            className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-60"
+            className="px-6 py-2.5 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:opacity-60"
           >
             מבחן נוסף
           </button>

@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<title>TAMI — הדגמה מלאה</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,'Arial Hebrew',sans-serif;background:#0f172a;width:100vw;height:100vh;overflow:hidden;direction:rtl}
+#stage{position:absolute;top:50%;left:50%;transform-origin:center center;transform:translate(-50%,-50%);width:1280px;height:720px;overflow:hidden}
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .5s}
+.slide.active{opacity:1;pointer-events:all}
+/* Browser */
+.browser{background:white;border-radius:10px;overflow:hidden;box-shadow:0 22px 65px rgba(0,0,0,.6);width:1210px;height:672px;position:absolute;top:24px;left:35px;display:flex;flex-direction:column}
+.bbar{background:#e2e8f0;padding:7px 13px;display:flex;align-items:center;gap:9px;flex-shrink:0}
+.dots{display:flex;gap:5px}.dots span{width:11px;height:11px;border-radius:50%}
+.dots span:nth-child(1){background:#ef4444}.dots span:nth-child(2){background:#f59e0b}.dots span:nth-child(3){background:#22c55e}
+.url{flex:1;background:white;border-radius:5px;padding:4px 10px;font-size:11px;color:#64748b;font-family:monospace;text-align:left}
+.bbody{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#f8fafc}
+/* Nav */
+.anav{background:white;border-bottom:1px solid #e2e8f0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0}
+.logo{font-size:15px;font-weight:800;color:#16a34a;display:flex;align-items:center;gap:6px}
+.lb{background:#16a34a;color:white;padding:2px 7px;border-radius:5px;font-size:12px}
+/* Workflow */
+.wf{background:white;border-bottom:1px solid #e2e8f0;padding:6px 20px;display:flex;align-items:center;flex-shrink:0}
+.ws{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:#94a3b8}
+.wn{width:19px;height:19px;border-radius:50%;background:#e2e8f0;color:#94a3b8;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.ws.done .wn{background:#22c55e;color:white}.ws.active .wn{background:#16a34a;color:white}.ws.active{color:#16a34a}
+.wl{width:22px;height:2px;background:#e2e8f0}.wl.done{background:#22c55e}
+/* Cards */
+.card{background:white;border-radius:9px;border:1px solid #e2e8f0;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;border:none}
+.bp{background:#16a34a;color:white}.bs{background:#f1f5f9;color:#334155;border:1px solid #e2e8f0}
+.bg{background:#16a34a;color:white}.brd{background:#fee2e2;color:#dc2626;border:1px solid #fecaca}
+.bsm{padding:4px 10px;font-size:10.5px}
+/* Form */
+.fl{display:block;font-size:10.5px;font-weight:600;color:#475569;margin-bottom:3px}
+.fi{width:100%;border:1.5px solid #e2e8f0;border-radius:6px;padding:6px 9px;font-size:11.5px;font-family:inherit;color:#1e293b;background:white}
+/* Badges */
+.bdg{display:inline-flex;align-items:center;padding:2px 7px;border-radius:9999px;font-size:10px;font-weight:600}
+.bb{background:#dcfce7;color:#16a34a}.bg2{background:#dcfce7;color:#16a34a}.bo{background:#ffedd5;color:#c2410c}
+.bp2{background:#ede9fe;color:#6d28d9}.bgr{background:#f1f5f9;color:#64748b}.byt{background:#fef3c7;color:#92400e}
+/* Progress */
+.pb{height:4px;background:#e2e8f0;border-radius:9999px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,#16a34a,#3b82f6);border-radius:9999px}
+/* Dim colors */
+.da{background:#ede9fe;color:#6d28d9}.db{background:#dcfce7;color:#16a34a}.dc{background:#dcfce7;color:#16a34a}.dd{background:#ffedd5;color:#c2410c}
+/* Nav */
+.nav-prev,.nav-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:white;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;z-index:200;display:flex;align-items:center;justify-content:center}
+.nav-prev{right:6px}.nav-next{left:6px}
+#dn{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:200}
+.nd{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:all .3s}
+.nd.on{background:white;width:18px;border-radius:3px}
+.slbl{position:absolute;bottom:5px;right:14px;font-size:9px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px}
+/* Typing */
+@keyframes blink{50%{border-color:transparent}}
+.typ{border-right:2px solid #16a34a;animation:blink .7s step-end infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sp{width:13px;height:13px;border:2px solid #e2e8f0;border-top-color:#16a34a;border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle}
+/* Question card */
+.qcard{background:white;border:1.5px solid #e2e8f0;border-radius:8px;padding:10px;margin-bottom:6px}
+.qn{width:21px;height:21px;background:#16a34a;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.opt{display:flex;align-items:center;gap:5px;padding:3px 6px;border-radius:4px;font-size:10.5px;margin:2px 0}
+.oc{width:13px;height:13px;border-radius:50%;border:2px solid #cbd5e1;flex-shrink:0}
+.oc.on{background:#16a34a;border-color:#16a34a}
+/* PDF page */
+.pdf-page{background:white;border:1px solid #d1d5db;box-shadow:0 4px 20px rgba(0,0,0,.15);padding:28px 32px;font-family:'Times New Roman',serif;direction:rtl;position:relative}
+.pdf-h1{font-size:17px;font-weight:700;text-align:center;border-bottom:2.5px solid #16a34a;padding-bottom:6px;margin-bottom:12px;color:#0f172a}
+.pdf-h2{font-size:13px;font-weight:700;background:#16a34a;color:white;padding:4px 10px;border-radius:4px;margin-bottom:8px}
+.pdf-q{font-size:11px;line-height:1.7;margin-bottom:10px}
+.pdf-opt{font-size:10.5px;padding:1px 0;display:flex;gap:6px}
+.pdf-box{border:1px solid #94a3b8;height:40px;border-radius:3px;margin-top:4px;background:#fafafa}
+/* Chat */
+.cm{padding:7px 11px;border-radius:8px;max-width:72%;font-size:11px;line-height:1.5;margin-bottom:6px}
+.cm.u{background:#16a34a;color:white;border-bottom-right-radius:2px}
+.cm.a{background:white;border:1px solid #e2e8f0;color:#1e293b;border-bottom-left-radius:2px;margin-right:auto}
+/* Dim pill full names */
+.dimA{background:#ede9fe;color:#5b21b6;border-radius:9999px;padding:1px 8px;font-size:10px;font-weight:600}
+.dimB{background:#dcfce7;color:#16a34a;border-radius:9999px;padding:1px 8px;font-size:10px;font-weight:600}
+.dimC{background:#dcfce7;color:#15803d;border-radius:9999px;padding:1px 8px;font-size:10px;font-weight:600}
+.dimD{background:#ffedd5;color:#c2410c;border-radius:9999px;padding:1px 8px;font-size:10px;font-weight:600}
+/* Toolbar */
+.toolbar{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:5px 8px;display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.tb-btn{background:white;border:1px solid #e2e8f0;border-radius:4px;padding:3px 8px;font-size:10px;cursor:pointer;font-family:inherit;color:#334155}
+.tb-btn.active{background:#dcfce7;border-color:#86efac;color:#16a34a}
+/* Value checkbox */
+.vcheck{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;font-size:11px;cursor:pointer;background:#f8fafc;border:1px solid #e2e8f0;margin-bottom:4px}
+.vcheck.sel{background:#dcfce7;border-color:#86efac;color:#16a34a;font-weight:600}
+.vbox{width:16px;height:16px;border-radius:3px;border:2px solid #cbd5e1;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vbox.sel{background:#16a34a;border-color:#16a34a;color:white;font-size:10px}
+/* Stat */
+.sc{background:white;border-radius:8px;padding:10px;border:1px solid #e2e8f0;text-align:center}
+.sn{font-size:22px;font-weight:800;color:#16a34a}.sl{font-size:9px;color:#64748b;margin-top:2px}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- ═══════════ 0 TITLE ═══════════ -->
+<div class="slide active" id="s0" style="background:linear-gradient(135deg,#0f172a 0%,#14532d 60%,#0f172a 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:white">
+  <div style="position:absolute;top:-60px;right:-40px;width:280px;height:280px;background:radial-gradient(circle,rgba(59,130,246,.2),transparent 70%);border-radius:50%"></div>
+  <div style="position:absolute;bottom:-40px;left:-40px;width:240px;height:240px;background:radial-gradient(circle,rgba(167,139,250,.15),transparent 70%);border-radius:50%"></div>
+  <div style="font-size:11px;color:#60a5fa;letter-spacing:5px;font-weight:600;margin-bottom:8px;z-index:1">מערכת חינוכית חדשנית · 2026</div>
+  <div style="font-size:88px;font-weight:900;background:linear-gradient(135deg,#60a5fa,#a78bfa,#f0abfc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;z-index:1">TAMI</div>
+  <div style="font-size:20px;color:#94a3b8;margin:8px 0 6px;z-index:1">מחולל מבחני הבנת הנקרא</div>
+  <div style="font-size:14px;color:#60a5fa;font-weight:500;margin-bottom:32px;z-index:1">⚡ מבחן מקצועי מוכן תוך דקות — מופעל על ידי Claude AI</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;z-index:1">
+    <span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:white;padding:5px 14px;border-radius:9999px;font-size:12px">📚 תקני ראמ"ה · 4 ממדים</span>
+    <span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:white;padding:5px 14px;border-radius:9999px;font-size:12px">🤖 Claude AI</span>
+    <span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:white;padding:5px 14px;border-radius:9999px;font-size:12px">🎓 כיתות ג׳–ט׳</span>
+    <span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:white;padding:5px 14px;border-radius:9999px;font-size:12px">📊 ניתוח ופרופיל</span>
+    <span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:white;padding:5px 14px;border-radius:9999px;font-size:12px">📄 PDF מוכן להדפסה</span>
+  </div>
+  <div style="position:absolute;bottom:20px;color:rgba(255,255,255,.28);font-size:11px;z-index:1">← לחץ לשקף הבא · מתחלף אוטומטית</div>
+</div>
+
+<!-- ═══════════ 1 LANDING ═══════════ -->
+<div class="slide" id="s1">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/</div></div>
+    <div class="bbody" style="background:linear-gradient(135deg,#14532d,#16a34a);display:flex;align-items:center;justify-content:center;flex-direction:column;color:white">
+      <div style="font-size:11px;letter-spacing:3px;color:#86efac;margin-bottom:7px;font-weight:600">מערכת TAMI — לב הכיתה</div>
+      <div style="font-size:36px;font-weight:900;margin-bottom:5px">מחולל מבחני הבנת הנקרא</div>
+      <div style="font-size:13px;color:#bbf7d0;margin-bottom:30px">מבחן מקצועי לפי תקני ראמ"ה — מוכן תוך דקות, לא שעות</div>
+      <div style="display:flex;gap:12px">
+        <button class="btn" style="background:white;color:#16a34a;font-size:13px;padding:11px 22px;box-shadow:0 4px 14px rgba(0,0,0,.25)">📝 צור מבחן חדש</button>
+        <button class="btn" style="background:rgba(255,255,255,.11);color:white;border:1.5px solid rgba(255,255,255,.3);font-size:13px;padding:11px 22px">📚 ספריית המבחנים שלי</button>
+      </div>
+      <div style="margin-top:36px;display:grid;grid-template-columns:repeat(5,1fr);gap:11px;max-width:840px">
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:12px;text-align:center"><div style="font-size:22px;margin-bottom:4px">⏱️</div><div style="font-size:11px;font-weight:700">3 דקות</div><div style="font-size:10px;color:#86efac;margin-top:2px">להגדרת מבחן</div></div>
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:12px;text-align:center"><div style="font-size:22px;margin-bottom:4px">🎯</div><div style="font-size:11px;font-weight:700">4 ממדי הבנה</div><div style="font-size:10px;color:#86efac;margin-top:2px">לפי ראמ"ה</div></div>
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:12px;text-align:center"><div style="font-size:22px;margin-bottom:4px">🤖</div><div style="font-size:11px;font-weight:700">ניקוד AI</div><div style="font-size:10px;color:#86efac;margin-top:2px">שאלות פתוחות</div></div>
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:12px;text-align:center"><div style="font-size:22px;margin-bottom:4px">📄</div><div style="font-size:11px;font-weight:700">PDF להדפסה</div><div style="font-size:10px;color:#86efac;margin-top:2px">כל החוברות</div></div>
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:12px;text-align:center"><div style="font-size:22px;margin-bottom:4px">📊</div><div style="font-size:11px;font-weight:700">פרופיל</div><div style="font-size:10px;color:#86efac;margin-top:2px">לכל תלמיד</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">דף פתיחה</div>
+</div>
+
+<!-- ═══════════ 2 SETTINGS: GRADE ═══════════ -->
+<div class="slide" id="s2">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/new-exam</div></div>
+    <div class="bbody">
+      <div class="anav"><div class="logo"><span class="lb">TAMI</span></div><div style="font-size:11px;color:#64748b">שלום, מורה שרה 👋</div></div>
+      <div class="wf">
+        <div class="ws active"><div class="wn">1</div><span>הגדרות</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">2</div><span>תמה ורעיון</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">3</div><span>טקסטים</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">4</div><span>שאלות</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">5</div><span>פרסום</span></div>
+      </div>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;background:#f8fafc">
+        <div style="width:480px">
+          <div style="text-align:center;margin-bottom:18px">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;padding:5px 14px;border-radius:9999px;font-size:11px;font-weight:700;color:#16a34a;margin-bottom:8px">📍 שלב 1 מתוך 4</div>
+            <div style="font-size:22px;font-weight:900;color:#0f172a">בחרי שכבת גיל</div>
+            <div style="font-size:12px;color:#64748b;margin-top:3px">הבחירה תקבע את אורך הטקסטים ומורכבות השאלות</div>
+          </div>
+          <div style="background:white;border:2.5px solid #16a34a;border-radius:12px;box-shadow:0 8px 32px rgba(30,64,175,.15);overflow:hidden">
+            <div>
+              <div style="padding:12px 20px;font-size:12px;color:#94a3b8;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f1f5f9;cursor:pointer">
+                <span>📖 כיתות ג׳–ד׳</span><span style="font-size:10px;background:#f1f5f9;padding:2px 8px;border-radius:9999px;color:#64748b">400–600 מילים</span>
+              </div>
+              <div style="padding:12px 20px;font-size:12px;color:#94a3b8;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f1f5f9;cursor:pointer">
+                <span>📖 כיתות ה׳–ו׳</span><span style="font-size:10px;background:#f1f5f9;padding:2px 8px;border-radius:9999px;color:#64748b">480–680 מילים</span>
+              </div>
+              <div style="padding:14px 20px;font-size:13px;font-weight:800;background:linear-gradient(90deg,#f0fdf4,#dcfce7);color:#16a34a;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #bbf7d0;cursor:pointer;position:relative">
+                <span style="display:flex;align-items:center;gap:8px">
+                  <span style="width:22px;height:22px;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">✓</span>
+                  כיתות ז׳–ט׳ — חטיבת ביניים
+                </span>
+                <span style="font-size:10px;background:#16a34a;color:white;padding:3px 10px;border-radius:9999px">נבחר</span>
+                <div style="position:absolute;right:0;top:0;bottom:0;width:4px;background:#16a34a"></div>
+              </div>
+              <div style="padding:12px 20px;font-size:12px;color:#94a3b8;display:flex;justify-content:space-between;align-items:center;cursor:pointer">
+                <span>📖 כיתות י׳–יב׳</span><span style="font-size:10px;background:#f1f5f9;padding:2px 8px;border-radius:9999px;color:#64748b">700–1000 מילים</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 14px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0">
+            <span style="font-size:16px">✅</span>
+            <span style="font-size:11px;color:#15803d;font-weight:600">נבחר: כיתות ז׳–ט׳ | 560–800 מילים | מבנה מותאם לחטיבת ביניים</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+            <div style="font-size:11px;color:#94a3b8">← נושא · ← ערכים · ← אווירה</div>
+            <button class="btn bp" style="font-size:12px;padding:9px 22px">הבא: בחירת נושא ←</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">שלב 1א — בחירת כיתה</div>
+</div>
+
+<!-- ═══════════ 3 SETTINGS: TOPIC ═══════════ -->
+<div class="slide" id="s3">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/new-exam</div></div>
+    <div class="bbody">
+      <div class="anav"><div class="logo"><span class="lb">TAMI</span></div><div style="display:flex;gap:6px;align-items:center"><span class="bdg bg2" style="font-size:10px">✓ כיתות ז׳–ט׳</span></div></div>
+      <div class="wf">
+        <div class="ws active"><div class="wn">1</div><span>הגדרות</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">2</div><span>תמה ורעיון</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">3</div><span>טקסטים</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">4</div><span>שאלות</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">5</div><span>פרסום</span></div>
+      </div>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;background:#f8fafc">
+        <div style="width:700px">
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 14px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;margin-bottom:12px">
+            <span>✅</span><span style="font-size:11px;color:#15803d;font-weight:600">כיתות ז׳–ט׳ — הושלם</span>
+          </div>
+          <div style="text-align:center;margin-bottom:12px">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;padding:4px 12px;border-radius:9999px;font-size:11px;font-weight:700;color:#16a34a;margin-bottom:5px">📍 שלב 2 מתוך 4</div>
+            <div style="font-size:20px;font-weight:900;color:#0f172a">בחרי נושא</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+            <div style="background:white;border:2px solid #e2e8f0;border-radius:10px;padding:10px;text-align:center;cursor:pointer">
+              <div style="font-size:22px;margin-bottom:4px">🏠</div><div style="font-size:10.5px;font-weight:700;color:#334155">משפחה וקהילה</div>
+            </div>
+            <div style="background:white;border:2px solid #e2e8f0;border-radius:10px;padding:10px;text-align:center;cursor:pointer">
+              <div style="font-size:22px;margin-bottom:4px">👫</div><div style="font-size:10.5px;font-weight:700;color:#334155">חברות וקשרים</div>
+            </div>
+            <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2.5px solid #16a34a;border-radius:10px;padding:10px;text-align:center;cursor:pointer;position:relative;box-shadow:0 4px 14px rgba(30,64,175,.2)">
+              <div style="position:absolute;top:5px;left:5px;width:18px;height:18px;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:700">✓</div>
+              <div style="font-size:22px;margin-bottom:4px">🤖</div><div style="font-size:10.5px;font-weight:800;color:#16a34a">מדע וטכנולוגיה</div>
+            </div>
+            <div style="background:white;border:2px solid #e2e8f0;border-radius:10px;padding:10px;text-align:center;cursor:pointer">
+              <div style="font-size:22px;margin-bottom:4px">🌿</div><div style="font-size:10.5px;font-weight:700;color:#334155">טבע וסביבה</div>
+            </div>
+            <div style="background:white;border:2px solid #e2e8f0;border-radius:10px;padding:10px;text-align:center;cursor:pointer">
+              <div style="font-size:22px;margin-bottom:4px">⚖️</div><div style="font-size:10.5px;font-weight:700;color:#334155">זהות וערכים</div>
+            </div>
+            <div style="background:white;border:2px solid #e2e8f0;border-radius:10px;padding:10px;text-align:center;cursor:pointer">
+              <div style="font-size:22px;margin-bottom:4px">🎨</div><div style="font-size:10.5px;font-weight:700;color:#334155">אמנות ויצירה</div>
+            </div>
+            <div style="background:white;border:2px solid #e2e8f0;border-radius:10px;padding:10px;text-align:center;cursor:pointer">
+              <div style="font-size:22px;margin-bottom:4px">🌍</div><div style="font-size:10.5px;font-weight:700;color:#334155">עולם ותרבויות</div>
+            </div>
+            <div style="background:white;border:2px solid #e2e8f0;border-radius:10px;padding:10px;text-align:center;cursor:pointer">
+              <div style="font-size:22px;margin-bottom:4px">📚</div><div style="font-size:10.5px;font-weight:700;color:#334155">ספרות ושפה</div>
+            </div>
+          </div>
+          <div style="background:white;border:2px solid #16a34a;border-radius:10px;padding:10px 14px;margin-bottom:10px">
+            <label class="fl" style="font-size:11px;margin-bottom:4px">🔍 נושא ספציפי</label>
+            <input class="fi" value="בינה מלאכותית ואחריות אנושית" readonly style="border-color:#16a34a;font-size:11.5px">
+            <div style="font-size:10px;color:#64748b;margin-top:4px">💡 AI ישתמש בנושא זה ביצירת הטקסטים</div>
+          </div>
+          <div style="display:flex;justify-content:flex-end">
+            <button class="btn bp" style="font-size:12px;padding:9px 22px">הבא: בחירת ערכים ←</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">שלב 1ב — בחירת נושא</div>
+</div>
+
+<!-- ═══════════ 4 SETTINGS: VALUES ═══════════ -->
+<div class="slide" id="s4">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/new-exam</div></div>
+    <div class="bbody">
+      <div class="anav"><div class="logo"><span class="lb">TAMI</span></div><div style="display:flex;gap:5px;align-items:center"><span class="bdg bg2" style="font-size:10px">✓ ז׳–ט׳</span><span class="bdg bg2" style="font-size:10px">✓ מדע וטכנולוגיה</span></div></div>
+      <div class="wf">
+        <div class="ws active"><div class="wn">1</div><span>הגדרות</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">2</div><span>תמה ורעיון</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">3</div><span>טקסטים</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">4</div><span>שאלות</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">5</div><span>פרסום</span></div>
+      </div>
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:12px 22px;background:#f8fafc;overflow:hidden">
+        <div>
+          <div style="text-align:center;margin-bottom:10px">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;padding:4px 12px;border-radius:9999px;font-size:11px;font-weight:700;color:#16a34a;margin-bottom:5px">📍 שלב 3 מתוך 4</div>
+            <div style="font-size:18px;font-weight:900;color:#0f172a">💎 בחרי ערכים (עד 3)</div>
+          </div>
+          <div style="background:white;border:2.5px solid #16a34a;border-radius:12px;overflow:hidden;box-shadow:0 4px 18px rgba(30,64,175,.12)">
+            <div style="background:#16a34a;padding:8px 14px;color:white;font-size:11px;font-weight:700;display:flex;justify-content:space-between"><span>💎 ערכים</span><span style="background:rgba(255,255,255,.2);padding:1px 8px;border-radius:9999px">3/3 נבחרו</span></div>
+            <div style="padding:7px">
+              <div class="vcheck sel" style="border-color:#16a34a;margin-bottom:3px"><div class="vbox sel">✓</div><div><div style="font-size:11px;font-weight:700">💪 אחריות אישית וסביבתית</div></div></div>
+              <div class="vcheck sel" style="border-color:#16a34a;margin-bottom:3px"><div class="vbox sel">✓</div><div><div style="font-size:11px;font-weight:700">🧠 חשיבה ביקורתית ועצמאית</div></div></div>
+              <div class="vcheck sel" style="border-color:#16a34a;margin-bottom:3px"><div class="vbox sel">✓</div><div><div style="font-size:11px;font-weight:700">🌍 תרומה לחברה ולעולם</div></div></div>
+              <div class="vcheck" style="opacity:.5;margin-bottom:3px"><div class="vbox"></div><div style="font-size:11px">❤️ אמפתיה ורגישות</div></div>
+              <div class="vcheck" style="opacity:.5;margin-bottom:3px"><div class="vbox"></div><div style="font-size:11px">🎯 עקשנות ונחישות</div></div>
+              <div class="vcheck" style="opacity:.5;margin-bottom:3px"><div class="vbox"></div><div style="font-size:11px">🔄 גמישות מחשבתית</div></div>
+              <div class="vcheck" style="opacity:.5;margin-bottom:3px"><div class="vbox"></div><div style="font-size:11px">🤝 שיתוף פעולה</div></div>
+              <div class="vcheck" style="opacity:.5;margin-bottom:3px"><div class="vbox"></div><div style="font-size:11px">💫 סקרנות ולמידה מתמדת</div></div>
+              <div class="vcheck" style="opacity:.5;margin-bottom:3px"><div class="vbox"></div><div style="font-size:11px">⚖️ יושרה וכנות</div></div>
+              <div class="vcheck" style="opacity:.5"><div class="vbox"></div><div style="font-size:11px">🌱 צמיחה אישית</div></div>
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <div style="font-size:11px;font-weight:700;color:#334155;margin-bottom:6px">🎭 אווירה</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span class="bdg" style="background:#16a34a;color:white;padding:5px 12px;font-size:11px">🔮 עתידני ✓</span>
+              <span class="bdg bb" style="padding:5px 12px;font-size:11px">🌊 דחיפות</span>
+              <span class="bdg bgr" style="padding:5px 12px;font-size:11px">💡 השראה</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="text-align:center;margin-bottom:10px">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;padding:4px 12px;border-radius:9999px;font-size:11px;font-weight:700;color:#15803d;margin-bottom:5px">✅ מוכן לשליחה</div>
+            <div style="font-size:18px;font-weight:900;color:#0f172a">📋 סיכום המבחן</div>
+          </div>
+          <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #bbf7d0;border-radius:12px;padding:14px;margin-bottom:12px">
+            <div style="display:grid;grid-template-columns:auto 1fr;gap:5px 10px;font-size:11.5px">
+              <span style="color:#64748b;font-weight:600">📚 כיתה:</span><span style="font-weight:700">כיתות ז׳–ט׳ (560–800 מילים)</span>
+              <span style="color:#64748b;font-weight:600">🌍 נושא:</span><span style="font-weight:700">מדע, טכנולוגיה ועתיד</span>
+              <span style="color:#64748b;font-weight:600">🔍 ספציפי:</span><span style="font-weight:700">בינה מלאכותית ואחריות</span>
+              <span style="color:#64748b;font-weight:600">💎 ערכים:</span><span style="font-weight:700">אחריות · חשיבה ביקורתית · תרומה</span>
+              <span style="color:#64748b;font-weight:600">🎭 אווירה:</span><span style="font-weight:700">עתידני</span>
+            </div>
+          </div>
+          <div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:10px;padding:12px;margin-bottom:12px">
+            <div style="font-size:11px;color:#15803d;font-weight:600;margin-bottom:4px">🤖 מה ה-AI ייצור עבורך?</div>
+            <div style="font-size:11px;color:#166534;line-height:1.7">
+              📖 טקסט סיפורי (600 מילים) — AI + אחריות + דילמה<br>
+              📰 טקסט עיוני (550 מילים) — מדע, לוויינים, AI<br>
+              ❓ 23 שאלות ב-4 ממדי הבנה · 100 נקודות<br>
+              📄 חוברת שאלות + מחוון + גרסת מורה
+            </div>
+          </div>
+          <button class="btn bp" style="width:100%;font-size:13px;padding:12px;box-shadow:0 4px 18px rgba(30,64,175,.3);justify-content:center">✨ צור תמה ורעיון עם Claude AI ←</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">שלב 1ג — ערכים ואישור</div>
+</div>
+
+<!-- ═══════════ 2 NEW EXAM (full form) ═══════════ -->
+<div class="slide" id="s5">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/new-exam</div></div>
+    <div class="bbody">
+      <div class="anav"><div class="logo"><span class="lb">TAMI</span></div><div style="font-size:11px;color:#64748b">שלום, מורה שרה 👋</div></div>
+      <div class="wf">
+        <div class="ws active"><div class="wn">1</div><span>הגדרות</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">2</div><span>תמה ורעיון</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">3</div><span>טקסטים</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">4</div><span>שאלות</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">5</div><span>פרסום</span></div>
+      </div>
+      <div style="padding:10px 22px;flex:1;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <!-- Left column -->
+        <div>
+          <div style="margin-bottom:10px"><label class="fl">📚 שכבת גיל</label>
+            <div style="border:1.5px solid #e2e8f0;border-radius:6px;overflow:hidden">
+              <div style="padding:5px 9px;font-size:11px;color:#64748b;background:#f8fafc;border-bottom:1px solid #e2e8f0">בחר שכבת גיל ⌄</div>
+              <div style="padding:4px 0">
+                <div style="padding:5px 10px;font-size:11px;color:#64748b;display:flex;justify-content:space-between">כיתות ג׳–ד׳ <span style="font-size:9px;color:#94a3b8">400–600 מילים</span></div>
+                <div style="padding:5px 10px;font-size:11px;background:#16a34a;color:white;font-weight:700;display:flex;justify-content:space-between">✓ כיתות ז׳–ט׳ <span style="font-size:9px;opacity:.8">560–800 מילים</span></div>
+                <div style="padding:5px 10px;font-size:11px;color:#64748b;display:flex;justify-content:space-between">כיתות ה׳–ו׳ <span style="font-size:9px;color:#94a3b8">480–680 מילים</span></div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-bottom:10px"><label class="fl">🌍 נושא</label>
+            <div style="border:1.5px solid #e2e8f0;border-radius:6px;overflow:hidden">
+              <div style="padding:5px 9px;font-size:11px;color:#64748b;background:#f8fafc;border-bottom:1px solid #e2e8f0">בחר נושא ⌄</div>
+              <div style="padding:4px 0">
+                <div style="padding:5px 10px;font-size:11px;color:#64748b">חברות וקשרים חברתיים</div>
+                <div style="padding:5px 10px;font-size:11px;background:#16a34a;color:white;font-weight:700">✓ מדע, טכנולוגיה ועתיד</div>
+                <div style="padding:5px 10px;font-size:11px;color:#64748b">טבע וסביבה</div>
+                <div style="padding:5px 10px;font-size:11px;color:#64748b">זהות, ערכים ומוסר</div>
+              </div>
+            </div>
+          </div>
+          <div><label class="fl">🔍 נושא ספציפי</label>
+            <input class="fi" value="בינה מלאכותית ואחריות אנושית" readonly>
+          </div>
+        </div>
+        <!-- Right column -->
+        <div>
+          <label class="fl" style="margin-bottom:6px">💎 ערכים — בחר עד 3</label>
+          <div class="vcheck sel"><div class="vbox sel">✓</div>אחריות אישית וסביבתית</div>
+          <div class="vcheck sel"><div class="vbox sel">✓</div>חשיבה ביקורתית ועצמאית</div>
+          <div class="vcheck sel"><div class="vbox sel">✓</div>תרומה לחברה ולעולם</div>
+          <div class="vcheck"><div class="vbox"></div>אמפתיה ורגישות</div>
+          <div class="vcheck"><div class="vbox"></div>עקשנות ונחישות</div>
+          <div style="margin-top:10px"><label class="fl">🎭 אווירה</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span class="bdg bb" style="cursor:pointer;padding:4px 10px">🔮 עתידני</span>
+              <span class="bdg bb" style="cursor:pointer;padding:4px 10px">🌊 דחיפות סביבתית</span>
+              <span class="bdg bgr" style="cursor:pointer;padding:4px 10px">💡 השראה</span>
+            </div>
+          </div>
+          <div style="margin-top:10px"><label class="fl">📄 סוג טקסט עיוני</label>
+            <div style="display:flex;gap:10px">
+              <label style="display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer"><input type="radio" checked> רציף</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer"><input type="radio"> לא רציף (טבלאות/צידוניות)</label>
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;justify-content:flex-end">
+            <button class="btn bp" style="font-size:12px;padding:9px 22px">✨ צור תמה ורעיון ←</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">שלב 1 — הגדרות</div>
+</div>
+
+<!-- ═══════════ 3 THEME + IDEA ═══════════ -->
+<div class="slide" id="s6">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/exam/m9x/plan</div></div>
+    <div class="bbody">
+      <div class="anav"><div class="logo"><span class="lb">TAMI</span></div><div style="display:flex;gap:6px"><span class="bdg bg2">✓ תמה נוצרה</span></div></div>
+      <div class="wf">
+        <div class="ws done"><div class="wn">✓</div></div><div class="wl done"></div>
+        <div class="ws active"><div class="wn">2</div><span>תמה ורעיון</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">3</div><span>טקסטים</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">4</div><span>שאלות</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">5</div><span>פרסום</span></div>
+      </div>
+      <div style="padding:10px 20px;flex:1;overflow:auto">
+        <!-- Theme -->
+        <div class="card" style="border-color:#16a34a;background:linear-gradient(135deg,#f0fdf4,#dcfce7);margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <div style="width:30px;height:30px;background:#16a34a;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px">🧠</div>
+            <div style="font-weight:700;font-size:12px;color:#16a34a">תמה מחברת — נוצרה על ידי AI</div>
+          </div>
+          <div style="background:white;border-radius:7px;padding:10px;border:1px solid #bbf7d0">
+            <div style="font-size:14px;font-weight:800;color:#16a34a;margin-bottom:5px">"כשהמחשב רואה מה שהעין האנושית פספסה"</div>
+            <div style="font-size:11.5px;line-height:1.7;color:#334155">בינה מלאכותית מגלה דפוסים שבני אדם מפספסים — אבל מי מחליט מה לעשות עם הגילוי? הכוח האמיתי נמצא בחיבור בין האלגוריתם לבין המוח האנושי שלוקח אחריות.</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <!-- Narrative idea -->
+          <div class="card" style="border-color:#16a34a;background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+              <div style="width:28px;height:28px;background:#16a34a;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px">📖</div>
+              <div><div style="font-weight:700;font-size:11.5px;color:#16a34a">רעיון לטקסט הסיפורי</div></div>
+            </div>
+            <div style="background:white;border-radius:6px;padding:9px;border:1px solid #bbf7d0;font-size:11px">
+              <div style="display:grid;grid-template-columns:80px 1fr;gap:4px 8px">
+                <span style="font-weight:700;color:#15803d">🧑 גיבורה:</span><span>ליאל, 16, תלמידת מצטיינת שמגלה אי-נוחות</span>
+                <span style="font-weight:700;color:#15803d">⚡ קונפליקט:</span><span>ה-AI שפיתחה מזהה כתמי דלק בים — אבל הנתונים מצביעים על חברה שמעסיקה את אביה</span>
+                <span style="font-weight:700;color:#15803d">💎 ערך:</span><span>אחריות אנושית מול נוחות אישית</span>
+                <span style="font-weight:700;color:#15803d">📝 תקציר:</span><span>ליאל חייבת להחליט — לדווח ולסכן את פרנסת המשפחה, או לשתוק</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:5px;margin-top:7px"><button class="btn bg bsm">✅ אשר</button><button class="btn bs bsm">✏️ שנה</button></div>
+          </div>
+          <!-- Info idea -->
+          <div class="card" style="border-color:#f59e0b;background:linear-gradient(135deg,#fffbeb,#fef3c7)">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+              <div style="width:28px;height:28px;background:#f59e0b;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px">📰</div>
+              <div><div style="font-weight:700;font-size:11.5px;color:#92400e">רעיון לטקסט העיוני</div></div>
+            </div>
+            <div style="background:white;border-radius:6px;padding:9px;border:1px solid #fde68a;font-size:11px">
+              <div style="display:grid;grid-template-columns:70px 1fr;gap:4px 8px">
+                <span style="font-weight:700;color:#92400e">📌 נושא:</span><span>כיצד AI מזהה זיהום אוקיאני מתצלומי לוויין</span>
+                <span style="font-weight:700;color:#92400e">🔎 היבטים:</span><span>אחוזי הצלחה, מגבלות האלגוריתם, מי לוקח אחריות</span>
+                <span style="font-weight:700;color:#92400e">💬 מסר:</span><span>הטכנולוגיה רואה — האדם מחליט</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:5px;margin-top:7px"><button class="btn bg bsm">✅ אשר ויצר טקסטים</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">שלב 2 — תמה ורעיון</div>
+</div>
+
+<!-- ═══════════ 4 AI GENERATING ═══════════ -->
+<div class="slide" id="s7">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/exam/m9x/texts — generating...</div></div>
+    <div class="bbody" style="display:flex;align-items:center;justify-content:center;background:white">
+      <div style="text-align:center;max-width:520px">
+        <div style="width:66px;height:66px;background:linear-gradient(135deg,#16a34a,#7c3aed);border-radius:17px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px">🤖</div>
+        <div style="font-size:19px;font-weight:700;margin-bottom:5px">Claude AI כותב את הטקסטים עכשיו...</div>
+        <div style="font-size:12px;color:#64748b;margin-bottom:22px">בהתאם לתמה ולרעיון שאישרת — כיתות ז׳–ט׳ · 560–800 מילים</div>
+        <div style="text-align:right;background:#f8fafc;border-radius:9px;padding:13px;font-size:11.5px;line-height:2;color:#334155;border:1px solid #e2e8f0;min-height:108px">
+          <div style="font-weight:700;color:#16a34a;margin-bottom:5px;font-size:12px">📖 כותב טקסט סיפורי — "הדוח של ליאל"</div>
+          <span id="tt" class="typ"></span>
+        </div>
+        <div style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;font-size:10.5px;margin-bottom:4px">
+            <span style="color:#22c55e;font-weight:600">✅ ניתוח תמה</span>
+            <span class="sp"></span>
+            <span style="color:#22c55e;font-weight:600">✅ טקסט סיפורי</span>
+            <span class="sp"></span>
+            <span style="color:#94a3b8">טקסט עיוני...</span>
+          </div>
+          <div class="pb"><div class="pf" style="width:68%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">AI כותב טקסטים</div>
+</div>
+
+<!-- ═══════════ 4b TEXTS REVEALED ═══════════ -->
+<div class="slide" id="s8">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/exam/m9x/texts — מוכן!</div></div>
+    <div class="bbody" style="background:white">
+      <div class="anav"><div class="logo"><span class="lb">TAMI</span></div><div style="display:flex;gap:5px"><span class="bdg bg2">✨ 2 טקסטים נוצרו בהצלחה!</span></div></div>
+      <div class="wf">
+        <div class="ws done"><div class="wn">✓</div></div><div class="wl done"></div>
+        <div class="ws done"><div class="wn">✓</div><span>תמה</span></div><div class="wl done"></div>
+        <div class="ws active"><div class="wn">3</div><span>טקסטים</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">4</div><span>שאלות</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">5</div><span>פרסום</span></div>
+      </div>
+      <!-- Origin chain banner -->
+      <div style="background:linear-gradient(90deg,#f0fdf4,#f0fdf4);border-bottom:2px solid #bbf7d0;padding:7px 18px;display:flex;align-items:center;gap:8px;font-size:10px;flex-shrink:0">
+        <span style="font-weight:800;color:#15803d">🔗 מקור הטקסטים:</span>
+        <span style="background:#16a34a;color:white;padding:2px 9px;border-radius:9999px;font-size:9.5px">📚 כיתות ז׳–ט׳</span>
+        <span style="color:#94a3b8">→</span>
+        <span style="background:#7c3aed;color:white;padding:2px 9px;border-radius:9999px;font-size:9.5px">🤖 מדע וטכנולוגיה</span>
+        <span style="color:#94a3b8">→</span>
+        <span style="background:#16a34a;color:white;padding:2px 9px;border-radius:9999px;font-size:9.5px">🧠 "כשהמחשב רואה מה שהעין פספסה"</span>
+        <span style="color:#94a3b8">→</span>
+        <span style="background:#f59e0b;color:white;padding:2px 9px;border-radius:9999px;font-size:9.5px">💎 אחריות · חשיבה ביקורתית</span>
+        <span style="margin-right:auto;font-size:9px;color:#22c55e;font-weight:700">✅ כל הבחירות שולבו</span>
+      </div>
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:0;overflow:hidden">
+        <!-- Narrative text result -->
+        <div style="border-left:1px solid #e2e8f0;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+            <div style="width:32px;height:32px;background:#16a34a;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">📖</div>
+            <div>
+              <div style="font-weight:800;font-size:13px;color:#15803d">טקסט סיפורי — חדש!</div>
+              <div style="font-size:9.5px;color:#64748b">612 מילים · ✓ כיתות ז׳–ט׳ · נוצר על-פי הרעיון שאישרת</div>
+            </div>
+            <span class="bdg bg2" style="font-size:9px;margin-right:auto">✓ מוכן</span>
+          </div>
+          <!-- Idea→Text trace -->
+          <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:7px;padding:7px 10px;font-size:9.5px">
+            <div style="font-weight:700;color:#15803d;margin-bottom:4px">📌 הרעיון שאישרת → הטקסט שנוצר:</div>
+            <div style="display:grid;grid-template-columns:90px 1fr;gap:3px 6px;line-height:1.6">
+              <span style="color:#64748b">גיבורה:</span><span style="color:#0f172a">ליאל, 16, פיתחה AI לגילוי זיהום ימי</span>
+              <span style="color:#64748b">קונפליקט:</span><span style="color:#0f172a">המעביד של אביה — המזהם</span>
+              <span style="color:#64748b">ערך:</span><span style="color:#0f172a"><span style="background:#dcfce7;padding:1px 5px;border-radius:3px;font-weight:600">אחריות</span> מול נוחות אישית</span>
+            </div>
+          </div>
+          <!-- First lines of the text -->
+          <div style="border-right:3px solid #16a34a;padding-right:8px">
+            <div style="font-weight:800;font-size:12px;color:#14532d;margin-bottom:5px">הדוח של ליאל</div>
+            <div style="font-size:10.5px;line-height:1.8;color:#334155">המסך זהר באור כחלחל בחדרה האפל של ליאל. שתיים בלילה, והיא עדיין לא זזה מהכיסא. מול עיניה — תמונות לוויין של חוף הים התיכון, שעיבד <u>האלגוריתם שפיתחה</u> במשך חצי שנה...</div>
+          </div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <span class="dimA" style="font-size:9px">A גלויה: 4 שאלות</span>
+            <span class="dimB" style="font-size:9px">B משתמעת: 5 שאלות</span>
+            <span class="dimC" style="font-size:9px">C פרשנות: 4 שאלות</span>
+            <span class="dimD" style="font-size:9px">D הערכה: 3 שאלות</span>
+          </div>
+        </div>
+        <!-- Info text result -->
+        <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+            <div style="width:32px;height:32px;background:#f59e0b;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">📰</div>
+            <div>
+              <div style="font-weight:800;font-size:13px;color:#92400e">טקסט עיוני — חדש!</div>
+              <div style="font-size:9.5px;color:#64748b">524 מילים · ✓ כיתות ז׳–ט׳ · נוצר על-פי הרעיון שאישרת</div>
+            </div>
+            <span class="bdg bg2" style="font-size:9px;margin-right:auto">✓ מוכן</span>
+          </div>
+          <!-- Idea→Text trace -->
+          <div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:7px;padding:7px 10px;font-size:9.5px">
+            <div style="font-weight:700;color:#92400e;margin-bottom:4px">📌 הרעיון שאישרת → הטקסט שנוצר:</div>
+            <div style="display:grid;grid-template-columns:90px 1fr;gap:3px 6px;line-height:1.6">
+              <span style="color:#64748b">נושא:</span><span style="color:#0f172a">כיצד AI מזהה זיהום אוקיאני מלוויינים</span>
+              <span style="color:#64748b">היבטים:</span><span style="color:#0f172a">דיוק 94%, מגבלות, מי לוקח אחריות</span>
+              <span style="color:#64748b">מסר:</span><span style="color:#0f172a"><span style="background:#fef9c3;padding:1px 5px;border-radius:3px;font-weight:600">הטכנולוגיה רואה — האדם מחליט</span></span>
+            </div>
+          </div>
+          <!-- First lines -->
+          <div style="border-right:3px solid #f59e0b;padding-right:8px">
+            <div style="font-weight:800;font-size:12px;color:#14532d;margin-bottom:5px">עין מעל הגלים — AI ואוקיאנים</div>
+            <div style="font-size:10.5px;line-height:1.8;color:#334155">כל יום, מאות לוויינים מצלמים את האוקיאנוס ממרחק 700 ק"מ. במשך שנים, רוב התמונות לא נבדקו — כי לא היו מספיק מדענים. היום, <u>מודלי בינה מלאכותית</u> מסוגלים לסרוק ביום אחד כמות תמונות שלוקחת לצוות מחקר שנה שלמה...</div>
+          </div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <span class="dimA" style="font-size:9px">A גלויה: 4 שאלות</span>
+            <span class="dimB" style="font-size:9px">B משתמעת: 3 שאלות</span>
+            <span class="dimC" style="font-size:9px">C פרשנות: 4 שאלות</span>
+            <span class="dimD" style="font-size:9px">D הערכה: 5 שאלות</span>
+          </div>
+        </div>
+      </div>
+      <div style="padding:8px 18px;display:flex;justify-content:space-between;align-items:center;background:white;border-top:1px solid #e2e8f0;flex-shrink:0">
+        <div style="font-size:10.5px;color:#64748b">✅ שני הטקסטים מוכנים לעריכה — אפשר לשנות, לקצר, להוסיף</div>
+        <button class="btn bp" style="font-size:12px;padding:8px 20px">✏️ עבור לעריכה ←</button>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">טקסטים חדשים — נוצרו!</div>
+</div>
+
+<!-- ═══════════ 5 TEXTS + LINGUISTIC EDIT ═══════════ -->
+<div class="slide" id="s9">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/exam/m9x/texts</div></div>
+    <div class="bbody">
+      <div class="anav"><div class="logo"><span class="lb">TAMI</span></div><div style="display:flex;gap:5px;align-items:center"><span class="bdg bg2">✓ 2 טקסטים מוכנים</span><span class="bdg" style="background:#fff7ed;color:#c2410c;font-size:9px">✨ 3 הצעות לשיפור לשוני</span></div></div>
+      <div class="wf">
+        <div class="ws done"><div class="wn">✓</div></div><div class="wl done"></div>
+        <div class="ws done"><div class="wn">✓</div><span>תמה</span></div><div class="wl done"></div>
+        <div class="ws active"><div class="wn">3</div><span>טקסטים</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">4</div><span>שאלות</span></div><div class="wl"></div>
+        <div class="ws"><div class="wn">5</div><span>פרסום</span></div>
+      </div>
+      <!-- SETTINGS IMPACT BANNER -->
+      <div style="background:linear-gradient(90deg,#f0fdf4,#f0fdf4);border-bottom:2px solid #bbf7d0;padding:5px 14px;display:flex;align-items:center;gap:6px;font-size:9.5px;flex-shrink:0">
+        <span style="font-weight:800;color:#16a34a">⚡ הטקסטים נוצרו בהתאם לבחירותייך:</span>
+        <span style="background:#16a34a;color:white;padding:1px 8px;border-radius:9999px;font-size:9px">📚 ז׳–ט׳</span>
+        <span style="background:#7c3aed;color:white;padding:1px 8px;border-radius:9999px;font-size:9px">🤖 מדע וטכנולוגיה</span>
+        <span style="background:#16a34a;color:white;padding:1px 8px;border-radius:9999px;font-size:9px">💎 אחריות ✓</span>
+        <span style="background:#16a34a;color:white;padding:1px 8px;border-radius:9999px;font-size:9px">💎 חשיבה ביקורתית ✓</span>
+        <span style="background:#16a34a;color:white;padding:1px 8px;border-radius:9999px;font-size:9px">💎 תרומה לחברה ✓</span>
+        <span style="color:#64748b;margin-right:auto;font-size:9px">← כל הבחירות שולבו בטקסטים</span>
+      </div>
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;gap:0">
+        <!-- Narrative -->
+        <div style="border-left:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden;padding:8px 11px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:5px">
+              <span style="font-size:15px">📖</span>
+              <div><div style="font-weight:800;font-size:12px">טקסט סיפורי</div><div style="font-size:9px;color:#64748b">612 מילים · <span style="color:#22c55e;font-weight:600">✓ בטווח ז׳–ט׳</span></div></div>
+            </div>
+            <span class="bdg bg2" style="font-size:9px">✓ עבר בדיקה</span>
+          </div>
+          <!-- Toolbar -->
+          <div class="toolbar" style="margin-bottom:5px;flex-shrink:0">
+            <button class="tb-btn" style="font-weight:700"><b>ב</b></button>
+            <button class="tb-btn"><u>נ</u></button>
+            <button class="tb-btn">↩</button>
+            <div style="width:1px;height:14px;background:#cbd5e1;margin:0 2px"></div>
+            <button class="tb-btn active" style="background:#fff7ed;border-color:#f59e0b;color:#92400e">✨ שיפור לשוני</button>
+            <button class="tb-btn">📏 מילים: 612</button>
+            <button class="tb-btn">🔤 מורכבות</button>
+            <button class="tb-btn">⚡ קיצור</button>
+          </div>
+          <!-- AI LINGUISTIC SUGGESTION PANEL -->
+          <div style="background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1.5px solid #f59e0b;border-radius:8px;padding:7px 10px;margin-bottom:5px;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px">
+              <span style="font-size:13px">✨</span>
+              <span style="font-size:10.5px;font-weight:800;color:#92400e">הצעת שיפור לשוני — Claude AI</span>
+              <span style="font-size:9px;background:#fed7aa;color:#92400e;padding:1px 6px;border-radius:9999px;margin-right:auto">1 מתוך 3</span>
+            </div>
+            <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 6px;font-size:9.5px;margin-bottom:6px">
+              <span style="color:#94a3b8;font-weight:600;white-space:nowrap">מקור:</span>
+              <span style="background:white;border-radius:3px;padding:2px 6px;border:1px solid #fde68a;color:#dc2626;text-decoration:line-through">"הכתם לא היה עננה ולא צל"</span>
+              <span style="color:#94a3b8;font-weight:600;white-space:nowrap">הצעה:</span>
+              <span style="background:white;border-radius:3px;padding:2px 6px;border:1px solid #bbf7d0;color:#15803d;font-weight:600">"על פני הגלים שרצה כתם כהה — לא עננה, לא צל"</span>
+              <span style="color:#94a3b8;font-weight:600;white-space:nowrap">סיבה:</span>
+              <span style="color:#64748b">שפה ציורית עשירה יותר · מתאים לרמת ז׳–ט׳</span>
+            </div>
+            <div style="display:flex;gap:4px">
+              <button class="btn bg bsm" style="font-size:9.5px">✓ קבל שיפור</button>
+              <button class="btn bs bsm" style="font-size:9.5px">✗ דחה</button>
+              <button class="btn bs bsm" style="font-size:9.5px;margin-right:auto">הצעה הבאה ←</button>
+            </div>
+          </div>
+          <!-- 4 components -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:5px;flex-shrink:0">
+            <div style="background:#ede9fe;border-radius:5px;padding:3px 7px;font-size:9px;display:flex;align-items:center;gap:3px"><span style="color:#6d28d9;font-weight:800">📚 רכיב הסוגה:</span><span style="color:#5b21b6">סיפורת · גוף ג׳ ✓</span></div>
+            <div style="background:#dcfce7;border-radius:5px;padding:3px 7px;font-size:9px;display:flex;align-items:center;gap:3px"><span style="color:#16a34a;font-weight:800">🎯 רכיב התוכן:</span><span style="color:#16a34a">AI · ערכים ✓</span></div>
+            <div style="background:#dcfce7;border-radius:5px;padding:3px 7px;font-size:9px;display:flex;align-items:center;gap:3px"><span style="color:#15803d;font-weight:800">✍️ רכיב השלון:</span><span style="color:#15803d">עשיר · תקני ✓</span></div>
+            <div style="background:#ffedd5;border-radius:5px;padding:3px 7px;font-size:9px;display:flex;align-items:center;gap:3px"><span style="color:#c2410c;font-weight:800">🏗️ רכיב המבנה:</span><span style="color:#c2410c">פתיחה·שיא·סיום ✓</span></div>
+          </div>
+          <div style="font-weight:800;font-size:12px;color:#14532d;margin-bottom:4px;flex-shrink:0;border-right:3px solid #16a34a;padding-right:6px">הדוח של ליאל</div>
+          <div style="font-size:10.5px;line-height:1.9;color:#1e293b;overflow:auto;flex:1">
+            <p>המסך זהר באור כחלחל בחדרה האפל של ליאל. שתיים בלילה, והיא עדיין לא זזה מהכיסא. מול עיניה — תמונות לוויין של חוף הים התיכון, שעיבד <span style="border-bottom:2px solid #7c3aed" title="נושא: מדע וטכנולוגיה">האלגוריתם שפיתחה</span> במשך חצי שנה.</p>
+            <p style="margin-top:6px">ליאל לחצה להגדלה. <mark style="background:#fde68a">הכתם לא היה עננה ולא צל — זה היה דלק. נפט. הדולף מצנרת תת-ימית.</mark> <span style="border-bottom:2px solid #7c3aed" title="נושא: מדע וטכנולוגיה">האלגוריתם זיהה את הטמפרטורה, את הצפיפות הכימית.</span> ספק אנושי לא היה.</p>
+            <p style="margin-top:6px"><mark style="background:#bbf7d0">אבל כשפתחה את שכבת הנתונים — קפא לבה.</mark> החברה שהצינור שייך לה — המעביד של אביה.</p>
+            <p style="margin-top:6px">"ליאל," קראה אמה, "מתי את הולכת לישון?" — "עוד רגע," ענתה. עיניה לא זזו מהמסך.</p>
+            <p style="margin-top:6px">היא פתחה קובץ ריק. כתבה: "דוח אנומליה סביבתית — 14.3.2026". <mark style="background:#ddd6fe">ואז עצרה. האצבעות ריחפו מעל המקלדת.</mark></p>
+            <p style="margin-top:6px">היא חשבה על הדגה שתיפגע. על ילדים שישחו בחוף. ואז — על אביה. על הגאווה בעיניו.</p>
+            <p style="margin-top:6px"><span style="background:#dcfce7;border-radius:3px;padding:1px 4px;font-size:9px;color:#15803d;font-weight:700" title="ערך: אחריות אישית">ערך: אחריות</span> לבסוף פתחה את אתר המשרד להגנת הסביבה ומילאה את הטופס. לחצה "שלח".</p>
+            <p style="margin-top:6px"><em>"הדיווח התקבל."</em> ים התיכון ישן בלי לדעת שמישהו מגן עליו.</p>
+          </div>
+          <div style="flex-shrink:0;margin-top:5px;padding-top:4px;border-top:1px solid #e2e8f0;display:flex;gap:4px;flex-wrap:wrap">
+            <span class="dimA" style="font-size:9px">A גלויה: 4</span><span class="dimB" style="font-size:9px">B משתמעת: 5</span><span class="dimC" style="font-size:9px">C פרשנות: 4</span><span class="dimD" style="font-size:9px">D הערכה: 3</span>
+          </div>
+        </div>
+        <!-- Info text -->
+        <div style="display:flex;flex-direction:column;overflow:hidden;padding:8px 11px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:5px">
+              <span style="font-size:15px">📰</span>
+              <div><div style="font-weight:800;font-size:12px">טקסט עיוני</div><div style="font-size:9px;color:#64748b">524 מילים · <span style="color:#22c55e;font-weight:600">✓ תקין</span></div></div>
+            </div>
+            <span class="bdg bg2" style="font-size:9px">✓ תקין</span>
+          </div>
+          <div class="toolbar" style="margin-bottom:5px;flex-shrink:0">
+            <button class="tb-btn" style="font-weight:700"><b>ב</b></button>
+            <button class="tb-btn"><u>נ</u></button>
+            <button class="tb-btn active" style="background:#fff7ed;border-color:#f59e0b;color:#92400e">✨ שיפור לשוני</button>
+            <button class="tb-btn">📏 מילים: 524</button>
+            <button class="tb-btn">🔤 מורכבות</button>
+            <button class="tb-btn">⚡ קיצור</button>
+          </div>
+          <!-- 4 components -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:5px;flex-shrink:0">
+            <div style="background:#ede9fe;border-radius:5px;padding:3px 7px;font-size:9px;display:flex;align-items:center;gap:3px"><span style="color:#6d28d9;font-weight:800">📚 רכיב הסוגה:</span><span style="color:#5b21b6">מאמר מדעי ✓</span></div>
+            <div style="background:#dcfce7;border-radius:5px;padding:3px 7px;font-size:9px;display:flex;align-items:center;gap:3px"><span style="color:#16a34a;font-weight:800">🎯 רכיב התוכן:</span><span style="color:#16a34a">AI · אוקיאנים ✓</span></div>
+            <div style="background:#dcfce7;border-radius:5px;padding:3px 7px;font-size:9px;display:flex;align-items:center;gap:3px"><span style="color:#15803d;font-weight:800">✍️ רכיב השלון:</span><span style="color:#15803d">עיוני · נגיש ✓</span></div>
+            <div style="background:#ffedd5;border-radius:5px;padding:3px 7px;font-size:9px;display:flex;align-items:center;gap:3px"><span style="color:#c2410c;font-weight:800">🏗️ רכיב המבנה:</span><span style="color:#c2410c">כותרות · פסקאות ✓</span></div>
+          </div>
+          <div style="font-weight:800;font-size:12px;color:#14532d;margin-bottom:4px;flex-shrink:0;border-right:3px solid #f59e0b;padding-right:6px">עין מעל הגלים — AI ואוקיאנים</div>
+          <div style="font-size:10.5px;line-height:1.9;color:#1e293b;overflow:auto;flex:1">
+            <p>כל יום, מאות לוויינים מצלמים את האוקיאנוס ממרחק 700 ק"מ. במשך שנים, רוב התמונות לא נבדקו — כי לא היו מספיק מדענים. <mark style="background:#fde68a">היום, <span style="border-bottom:2px solid #7c3aed" title="נושא: מדע וטכנולוגיה">מודלי בינה מלאכותית</span> מסוגלים לסרוק ביום אחד כמות תמונות שלוקחת לצוות מחקר שנה שלמה.</mark></p>
+            <p style="margin-top:6px">המערכת PlasTrak, שפותחה בשיתוף NASA ו-ESA, מגיעה לדיוק של <strong>94%</strong>. <mark style="background:#bbf7d0">מאז 2024 זוהו 312 אירועי זיהום שהיו נעלמים לגמרי לפני עידן ה-AI.</mark></p>
+            <p style="margin-top:6px">אבל יש גבול לכוחו של האלגוריתם. <strong>ד"ר יובל אמיר:</strong> "הבינה המלאכותית מאתרת. היא לא שופטת. <span style="background:#dcfce7;border-radius:3px;padding:1px 4px;font-size:9px;color:#15803d;font-weight:700" title="ערך: אחריות">ערך: אחריות</span> ברגע שגילוי הופך לדילמה — האדם לוקח אחריות."</p>
+            <p style="margin-top:6px">בפועל, כל דוח עובר שרשרת בני אדם: מדען שמאמת, גורם רגולטורי שמחליט, ועיתונאי שמפרסם. <mark style="background:#fde68a">ב-2025 לבדה, גילויי AI הובילו לעיצום על 7 חברות ספנות.</mark></p>
+            <p style="margin-top:6px"><mark style="background:#ddd6fe">זוהי הנקודה שבה הטכנולוגיה נדרשת להיעצר ולהעביר את הכדור לידיים האנושיות.</mark></p>
+            <p style="margin-top:6px">השאלה הגדולה: לא "מה הוא יכול לראות?" — אלא "מה נעשה עם מה שהוא גילה?"</p>
+          </div>
+          <div style="flex-shrink:0;margin-top:5px;padding-top:4px;border-top:1px solid #e2e8f0;display:flex;gap:4px;flex-wrap:wrap">
+            <span class="dimA" style="font-size:9px">A גלויה: 4</span><span class="dimB" style="font-size:9px">B משתמעת: 3</span><span class="dimC" style="font-size:9px">C פרשנות: 4</span><span class="dimD" style="font-size:9px">D הערכה: 5</span>
+          </div>
+        </div>
+      </div>
+      <div style="padding:6px 18px;display:flex;justify-content:space-between;align-items:center;background:white;border-top:1px solid #e2e8f0;flex-shrink:0">
+        <div style="display:flex;gap:5px">
+          <button class="btn bs bsm">💡 כל הצעות השיפור (3)</button>
+          <button class="btn bs bsm">🔄 יצר מחדש</button>
+        </div>
+        <button class="btn bp" style="font-size:12px;padding:8px 20px">✅ אשר ויצר שאלות ←</button>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">שלב 3 — עריכת טקסטים</div>
+</div>
+
+<!-- ═══════════ 6 QUESTIONS (SEQUENCE) ═══════════ -->
+<div class="slide" id="s10">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/exam/m9x/questions</div></div>
+    <div class="bbody">
+      <div class="anav" style="padding:0 14px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="logo"><span class="lb">TAMI</span></div>
+          <span style="font-size:11px;font-weight:700;color:#0f172a">23 שאלות — רצף מלא</span>
+          <span class="bdg bgr" style="font-size:9px">6 פורמטים</span>
+        </div>
+        <div style="display:flex;gap:4px;align-items:center">
+          <span class="dimA" style="font-size:9px">A גלויה: 4</span>
+          <span class="dimB" style="font-size:9px">B משתמעת: 6</span>
+          <span class="dimC" style="font-size:9px">C פרשנות: 6</span>
+          <span class="dimD" style="font-size:9px">D הערכה: 7</span>
+        </div>
+      </div>
+      <!-- Two-column flowing question sequence -->
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:0;overflow:hidden">
+
+        <!-- LEFT COLUMN: Q1–Q5 -->
+        <div style="border-left:1px solid #e2e8f0;overflow:auto;padding:8px 10px;display:flex;flex-direction:column;gap:6px">
+
+          <!-- Q1 -->
+          <div class="qcard" style="border-right:3px solid #6d28d9;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">
+              <div class="qn" style="background:#6d28d9">1</div>
+              <span class="dimA" style="font-size:9px">A — הבנת המשמעות הגלויה</span>
+              <span class="bdg bgr" style="font-size:9px">בחירה מרובה</span>
+              <span style="background:#dcfce7;color:#15803d;padding:1px 6px;border-radius:9999px;font-size:8px;font-weight:700">📖 טקסט סיפורי</span>
+              <span style="font-size:9.5px;color:#64748b;margin-right:auto">2 נק׳</span>
+            </div>
+            <div style="font-size:10.5px;font-weight:700;margin-bottom:5px;color:#0f172a">מה זיהה האלגוריתם של ליאל בתמונות הלוויין?</div>
+            <div>
+              <div class="opt"><div class="oc on"></div><span style="font-size:10px">א. כתם נפט דולף מצנרת תת-ימית</span></div>
+              <div class="opt"><div class="oc"></div><span style="font-size:10px">ב. עלייה חריגה בטמפרטורת המים</span></div>
+              <div class="opt"><div class="oc"></div><span style="font-size:10px">ג. ריכוז פלסטיק גבוה ביוצא מן הכלל</span></div>
+              <div class="opt"><div class="oc"></div><span style="font-size:10px">ד. ירידה חדה בריכוז החמצן</span></div>
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="qcard" style="border-right:3px solid #6d28d9;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">
+              <div class="qn" style="background:#6d28d9">2</div>
+              <span class="dimA" style="font-size:9px">A — הבנת המשמעות הגלויה</span>
+              <span class="bdg bgr" style="font-size:9px">השלמה</span>
+              <span style="background:#dcfce7;color:#15803d;padding:1px 6px;border-radius:9999px;font-size:8px;font-weight:700">📖 טקסט סיפורי</span>
+              <span style="font-size:9.5px;color:#64748b;margin-right:auto">3 נק׳</span>
+            </div>
+            <div style="font-size:10.5px;font-weight:700;margin-bottom:5px;color:#0f172a">השלימי: האלגוריתם שפיתחה ליאל זיהה את ___ ואת ___ ואת ___ של הכתם.</div>
+            <div style="display:flex;gap:6px;font-size:10px">
+              <span style="border-bottom:1.5px solid #16a34a;padding:0 20px;color:#94a3b8">___________</span>
+              <span style="border-bottom:1.5px solid #16a34a;padding:0 20px;color:#94a3b8">___________</span>
+              <span style="border-bottom:1.5px solid #16a34a;padding:0 20px;color:#94a3b8">___________</span>
+            </div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="qcard" style="border-right:3px solid #6d28d9;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">
+              <div class="qn" style="background:#6d28d9">3</div>
+              <span class="dimA" style="font-size:9px">A — הבנת המשמעות הגלויה</span>
+              <span class="bdg bgr" style="font-size:9px">מציאת מידע</span>
+              <span style="background:#fef9c3;color:#92400e;padding:1px 6px;border-radius:9999px;font-size:8px;font-weight:700">📰 טקסט עיוני</span>
+              <span style="font-size:9.5px;color:#64748b;margin-right:auto">4 נק׳</span>
+            </div>
+            <div style="font-size:10.5px;font-weight:700;margin-bottom:5px;color:#0f172a">ציינו שני פרטים מהמאמר המוכיחים כי AI יעיל יותר ממדענים בסריקת תמונות לוויין.</div>
+            <div style="font-size:10px;color:#64748b">פרט א: <span style="border-bottom:1.5px solid #94a3b8;padding:0 40px"></span></div>
+            <div style="font-size:10px;color:#64748b;margin-top:3px">פרט ב: <span style="border-bottom:1.5px solid #94a3b8;padding:0 40px"></span></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="qcard" style="border-right:3px solid #16a34a;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">
+              <div class="qn" style="background:#16a34a">4</div>
+              <span class="dimB" style="font-size:9px">B — הבנת המשמעות המשתמעת</span>
+              <span class="bdg bgr" style="font-size:9px">הסקת מסקנה</span>
+              <span style="background:#dcfce7;color:#15803d;padding:1px 6px;border-radius:9999px;font-size:8px;font-weight:700">📖 טקסט סיפורי</span>
+              <span style="font-size:9.5px;color:#64748b;margin-right:auto">3 נק׳</span>
+            </div>
+            <div style="font-size:10.5px;font-weight:700;margin-bottom:5px;color:#0f172a">מדוע ליאל עצרה לפני שלחצה "שלח"? מה עבר בראשה באותו רגע?</div>
+            <div style="background:#f8fafc;border-radius:5px;padding:5px 8px;font-size:10px;color:#64748b;border:1px dashed #e2e8f0">כתבי 2–3 שורות. הסתמכי על פרטים מהסיפור.</div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="qcard" style="border-right:3px solid #16a34a;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">
+              <div class="qn" style="background:#16a34a">5</div>
+              <span class="dimB" style="font-size:9px">B — הבנת המשמעות המשתמעת</span>
+              <span class="bdg bgr" style="font-size:9px">ניתוח דמות</span>
+              <span style="background:#dcfce7;color:#15803d;padding:1px 6px;border-radius:9999px;font-size:8px;font-weight:700">📖 טקסט סיפורי</span>
+              <span style="font-size:9.5px;color:#64748b;margin-right:auto">4 נק׳</span>
+            </div>
+            <div style="font-size:10.5px;font-weight:700;margin-bottom:5px;color:#0f172a">מהי הדילמה המרכזית של ליאל? מה ניתן ללמוד ממנה על אופייה?</div>
+            <div style="background:#f8fafc;border-radius:5px;padding:5px 8px;font-size:10px;color:#64748b;border:1px dashed #bbf7d0">🎯 מחוון: 2 נק׳ לזיהוי הדילמה + 2 נק׳ לאפיון הדמות עם אסמכתא</div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Q6–Q10 -->
+        <div style="overflow:auto;padding:8px 10px;display:flex;flex-direction:column;gap:6px">
+
+          <!-- Q6 -->
+          <div class="qcard" style="border-right:3px solid #16a34a;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">
+              <div class="qn" style="background:#16a34a">6</div>
+              <span class="dimB" style="font-size:9px">B — הבנת המשמעות המשתמעת</span>
+              <span class="bdg bgr" style="font-size:9px">פתוח</span>
+              <span style="background:#dcfce7;color:#15803d;padding:1px 6px;border-radius:9999px;font-size:8px;font-weight:700">📖 טקסט סיפורי</span>
+              <span style="font-size:9.5px;color:#64748b;margin-right:auto">5 נק׳</span>
+            </div>
+            <div style="font-size:10.5px;font-weight:700;margin-bottom:5px;color:#0f172a">מדוע "קפא לב" ליאל כשגילתה את שם החברה? מה מגלה על דמותה?</div>
+            <div style="background:#f0fdf4;border-radius:5px;padding:5px 8px;font-size:10px;border:1px solid #bbf7d0">
+              <div style="color:#16a34a;font-weight:700;margin-bottom:2px">📝 דוגמה לתשובה:</div>
+              <div style="color:#334155">ליאל הבינה שדיווח יפגע בעבודת אביה — דבר המגלה שהיא אחראית ואמפתית.</div>
+              <div style="color:#64748b;margin-top:3px">🎯 מחוון: 2 נק׳ פרשנות + 2 נק׳ אסמכתא + 1 נק׳ ניסוח</div>
+            </div>
+          </div>
+
+          <!-- Q7 -->
+          <div class="qcard" style="border-right:3px solid #15803d;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">
+              <div class="qn" style="background:#15803d">7</div>
+              <span class="dimC" style="font-size:9px">C — פרשנות ויישום</span>
+              <span class="bdg bgr" style="font-size:9px">פרשנות</span>
+              <span style="background:#ede9fe;color:#6d28d9;padding:1px 6px;border-radius:9999px;font-size:8px;font-weight:700">🔗 שני הטקסטים</span>
+              <span style="font-size:9.5px;color:#64748b;margin-right:auto">4 נק׳</span>
+            </div>
+            <div style="font-size:10.5px;font-weight:700;margin-bottom:5px;color:#0f172a">ד"ר אמיר אומר "הבינה המלאכותית מאתרת — לא שופטת." כיצד זה בא לידי ביטוי בסיפורה של ליאל?</div>
+            <div style="background:#f0fdf4;border-radius:5px;padding:5px 8px;font-size:10px;border:1px solid #bbf7d0;color:#15803d">🎯 מחוון: 2 נק׳ לקישור ציטוט–סיפור + 2 נק׳ לדוגמה ספציפית</div>
+          </div>
+
+          <!-- Q8 -->
+          <div class="qcard" style="border-right:3px solid #15803d;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">
+              <div class="qn" style="background:#15803d">8</div>
+              <span class="dimC" style="font-size:9px">C — פרשנות ויישום</span>
+              <span class="bdg bgr" style="font-size:9px">טבלה</span>
+              <span style="background:#ede9fe;color:#6d28d9;padding:1px 6px;border-radius:9999px;font-size:8px;font-weight:700">🔗 שני הטקסטים</span>
+              <span style="font-size:9.5px;color:#64748b;margin-right:auto">6 נק׳</span>
+            </div>
+            <div style="font-size:10.5px;font-weight:700;margin-bottom:5px;color:#0f172a">השלם: כיצד הסיפור והמאמר מציגים תפקיד AI מול תפקיד האדם?</div>
+            <table style="width:100%;font-size:9px;border-collapse:collapse">
+              <tr style="background:#dcfce7"><th style="padding:3px 5px;border:1px solid #bbf7d0">היבט</th><th style="padding:3px 5px;border:1px solid #bbf7d0">מהסיפור</th><th style="padding:3px 5px;border:1px solid #bbf7d0">מהמאמר</th></tr>
+              <tr><td style="padding:3px 5px;border:1px solid #e2e8f0;font-weight:600">תפקיד AI</td><td style="border:1px solid #e2e8f0;background:#fefce8;height:20px"></td><td style="border:1px solid #e2e8f0;background:#fefce8"></td></tr>
+              <tr><td style="padding:3px 5px;border:1px solid #e2e8f0;font-weight:600">תפקיד האדם</td><td style="border:1px solid #e2e8f0;background:#fefce8;height:20px"></td><td style="border:1px solid #e2e8f0;background:#fefce8"></td></tr>
+            </table>
+          </div>
+
+          <!-- Q9 -->
+          <div class="qcard" style="border-right:3px solid #15803d;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">
+              <div class="qn" style="background:#15803d">9</div>
+              <span class="dimC" style="font-size:9px">C — פרשנות ויישום</span>
+              <span class="bdg bgr" style="font-size:9px">אמת / שקר + תיקון</span>
+              <span style="background:#ede9fe;color:#6d28d9;padding:1px 6px;border-radius:9999px;font-size:8px;font-weight:700">🔗 שני הטקסטים</span>
+              <span style="font-size:9.5px;color:#64748b;margin-right:auto">4 נק׳</span>
+            </div>
+            <div style="font-size:10.5px;font-weight:700;margin-bottom:5px;color:#0f172a">סמן אמת (א) / שקר (ש) — ובמקרה של שקר: תקן:</div>
+            <div style="font-size:10px">
+              <div style="display:flex;gap:4px;margin-bottom:4px;align-items:flex-start"><span style="background:#dcfce7;padding:1px 5px;border-radius:3px;font-weight:800;color:#16a34a;flex-shrink:0">א</span><span>מערכת PlasTrak מגיעה לדיוק של 94% בזיהוי זיהום ימי</span></div>
+              <div style="display:flex;gap:4px;margin-bottom:4px;align-items:flex-start"><span style="background:#fee2e2;padding:1px 5px;border-radius:3px;font-weight:800;color:#ef4444;flex-shrink:0">ש</span><span>ליאל פנתה לאביה לבקש עצה לפני שדיווחה <span style="color:#16a34a;font-weight:600">← היא לא פנתה לאף אחד; קיבלה החלטה עצמאית</span></span></div>
+              <div style="display:flex;gap:4px;align-items:flex-start"><span style="background:#dcfce7;padding:1px 5px;border-radius:3px;font-weight:800;color:#16a34a;flex-shrink:0">א</span><span>ב-2025 גרמו גילויי AI לעיצום על 7 חברות ספנות</span></div>
+            </div>
+          </div>
+
+          <!-- Q10 -->
+          <div class="qcard" style="border-right:3px solid #c2410c;background:linear-gradient(135deg,#fff7ed,#fffbeb);flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">
+              <div class="qn" style="background:#c2410c">10</div>
+              <span class="dimD" style="font-size:9px">D — בחינה והערכה</span>
+              <span class="bdg bgr" style="font-size:9px">בין-טקסטי</span>
+              <span style="background:#ede9fe;color:#6d28d9;padding:1px 6px;border-radius:9999px;font-size:8px;font-weight:700">🔗 שני הטקסטים</span>
+              <span style="font-size:9.5px;color:#64748b;margin-right:auto">6 נק׳</span>
+            </div>
+            <div style="font-size:10.5px;font-weight:700;margin-bottom:5px;color:#0f172a">ד"ר אמיר אומר: "ברגע שגילוי הופך לדילמה — האדם לוקח אחריות." כיצד ליאל מדגימה זאת? האם לדעתך פעלה נכון? נמקי.</div>
+            <div style="background:white;border-radius:5px;padding:5px 8px;font-size:10px;border:1px solid #fde68a;color:#92400e">🎯 מחוון: 2 נק׳ קישור לציטוט · 2 נק׳ עמדה מנומקת · 2 נק׳ אסמכתא מ-2 מקורות</div>
+          </div>
+
+          <div style="text-align:center;font-size:9.5px;color:#94a3b8;padding:4px;flex-shrink:0">↓ עוד 13 שאלות (11–23) • גלול להמשך</div>
+
+        </div>
+      </div>
+      <!-- Bottom bar -->
+      <div style="padding:6px 18px;display:flex;justify-content:space-between;align-items:center;background:white;border-top:1px solid #e2e8f0;flex-shrink:0">
+        <div style="display:flex;gap:5px;align-items:center">
+          <span style="font-size:10px;color:#64748b">מציג 1–10 מתוך 23</span>
+          <button class="btn bs bsm">✏️ ערוך שאלה</button>
+          <button class="btn bs bsm">➕ הוסף שאלה</button>
+        </div>
+        <button class="btn bp" style="font-size:11.5px;padding:7px 18px">✅ אשר 23 שאלות ←</button>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">שלב 4 — שאלות (רצף)</div>
+</div>
+
+<!-- ═══════════ 7 PDF PREVIEW ═══════════ -->
+<div class="slide" id="s11">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/exam/m9x/ready — תצוגת PDF</div></div>
+    <div class="bbody" style="background:#1e293b;display:flex;flex-direction:column;overflow:hidden">
+      <!-- Download progress strip -->
+      <div style="background:#0f172a;padding:9px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;border-bottom:1px solid #334155">
+        <div style="font-size:10.5px;font-weight:700;color:#94a3b8;white-space:nowrap">⬇ הורדת חוברות PDF:</div>
+        <div style="display:flex;gap:8px;flex:1">
+          <div style="flex:1;background:#1e293b;border-radius:6px;padding:6px 10px;border:1px solid #334155">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:10px;font-weight:600;color:#e2e8f0">📖 חוברת טקסטים</span>
+              <span style="font-size:10px;color:#22c55e;font-weight:700">✓ הורד!</span>
+            </div>
+            <div class="pb"><div class="pf" style="width:100%;background:linear-gradient(90deg,#16a34a,#22c55e)"></div></div>
+          </div>
+          <div style="flex:1;background:#1e293b;border-radius:6px;padding:6px 10px;border:1px solid #334155">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:10px;font-weight:600;color:#e2e8f0">📝 חוברת שאלות</span>
+              <span style="font-size:10px;color:#60a5fa;font-weight:700">⬇ מוריד 74%...</span>
+            </div>
+            <div class="pb"><div class="pf" style="width:74%"></div></div>
+          </div>
+          <div style="flex:1;background:#1e293b;border-radius:6px;padding:6px 10px;border:1px solid #334155">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:10px;font-weight:600;color:#e2e8f0">✅ מחוון בדיקה</span>
+              <span style="font-size:10px;color:#64748b">ממתין...</span>
+            </div>
+            <div class="pb"><div class="pf" style="width:4%"></div></div>
+          </div>
+        </div>
+      </div>
+      <!-- 3 PDF previews -->
+      <div style="display:flex;gap:10px;padding:10px 14px;flex:1;overflow:auto;align-items:flex-start;justify-content:center">
+
+        <!-- Texts booklet -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+          <div style="font-size:10px;font-weight:700;color:#22c55e;margin-bottom:5px;letter-spacing:.5px">📖 חוברת טקסטים ✓</div>
+          <div class="pdf-page" style="width:265px;font-size:10px">
+            <div class="pdf-h1" style="font-size:14px;border-color:#16a34a">מבחן הבנת הנקרא<br><span style="font-size:9px;font-weight:400">כיתות ז׳–ט׳ | חוברת טקסטים בלבד</span></div>
+            <div style="font-weight:700;font-size:11px;color:#16a34a;margin-bottom:4px;border-right:3px solid #16a34a;padding-right:6px">הדוח של ליאל — טקסט סיפורי</div>
+            <div style="font-size:9.5px;line-height:1.8;color:#1e293b">המסך זהר באור כחלחל בחדרה האפל של ליאל. שתיים בלילה, והיא עדיין לא זזה מהכיסא. מול עיניה — תמונות לוויין של חוף הים התיכון. <mark style="background:#fde68a">הכתם לא היה עננה — זה היה דלק. נפט. הדולף מצנרת תת-ימית.</mark> האלגוריתם שלה זיהה את הטמפרטורה, את הצפיפות הכימית. <mark style="background:#bbf7d0">אבל כשפתחה את שכבת הנתונים — קפא לבה.</mark> החברה שהצינור שייך לה — המעביד של אביה...</div>
+            <div style="margin-top:8px;border-top:2px solid #f59e0b;padding-top:5px;font-weight:700;font-size:11px;color:#92400e;border-right:3px solid #f59e0b;padding-right:6px">עין מעל הגלים — טקסט עיוני</div>
+            <div style="font-size:9.5px;line-height:1.8;color:#1e293b;margin-top:4px"><mark style="background:#bbf7d0">מודלי בינה מלאכותית מסוגלים לסרוק ביום אחד כמות תמונות שלוקחת לצוות מחקר שנה שלמה.</mark> המערכת PlasTrak מגיעה לדיוק של 94%. <strong>ד"ר יובל אמיר:</strong> "הבינה המלאכותית מאתרת. היא לא שופטת. <mark style="background:#ddd6fe">ברגע שגילוי הופך לדילמה — האדם הוא זה שלוקח אחריות."</mark></div>
+          </div>
+        </div>
+
+        <!-- Questions booklet -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+          <div style="font-size:10px;font-weight:700;color:#60a5fa;margin-bottom:5px;letter-spacing:.5px">📝 חוברת שאלות ⬇</div>
+          <div class="pdf-page" style="width:265px;font-size:10px">
+            <div class="pdf-h1" style="font-size:14px">חוברת שאלות<br><span style="font-size:9px;font-weight:400">100 נקודות · 60 דקות</span></div>
+            <div style="font-size:9px;color:#64748b;margin-bottom:7px">שם: _________ כיתה: ___ תאריך: ______</div>
+            <div class="pdf-h2" style="font-size:10px">ממד A — הבנת המשמעות הגלויה</div>
+            <div class="pdf-q" style="font-size:9.5px"><strong>1.</strong> מה זיהה האלגוריתם של ליאל? (2 נק׳)<br>
+              <div class="pdf-opt" style="font-size:9px">א. כתם נפט דולף מצנרת תת-ימית</div>
+              <div class="pdf-opt" style="font-size:9px">ב. עלייה בטמפרטורת מי הים</div>
+              <div class="pdf-opt" style="font-size:9px">ג. ריכוז פלסטיק גבוה</div>
+              <div class="pdf-opt" style="font-size:9px">ד. ירידה בריכוז החמצן</div>
+            </div>
+            <div class="pdf-h2" style="font-size:10px;background:#16a34a">ממד B — הבנת המשמעות המשתמעת</div>
+            <div class="pdf-q" style="font-size:9.5px"><strong>6.</strong> מדוע "קפא לב" ליאל? מה זה מגלה על דמותה? (5 נק׳)<br><div class="pdf-box" style="height:28px"></div></div>
+            <div class="pdf-h2" style="font-size:10px;background:#15803d">ממד C — פרשנות ויישום</div>
+            <div class="pdf-q" style="font-size:9.5px"><strong>11.</strong> השלם טבלה: תפקיד AI מול תפקיד אדם (6 נק׳)<br>
+              <table style="width:100%;font-size:9px;border-collapse:collapse;margin-top:3px">
+                <tr style="background:#f1f5f9"><th style="border:1px solid #94a3b8;padding:2px">היבט</th><th style="border:1px solid #94a3b8;padding:2px">מהסיפור</th><th style="border:1px solid #94a3b8;padding:2px">מהמאמר</th></tr>
+                <tr><td style="border:1px solid #94a3b8;padding:2px">תפקיד AI</td><td style="border:1px solid #94a3b8;height:18px"></td><td style="border:1px solid #94a3b8"></td></tr>
+                <tr><td style="border:1px solid #94a3b8;padding:2px">תפקיד האדם</td><td style="border:1px solid #94a3b8;height:18px"></td><td style="border:1px solid #94a3b8"></td></tr>
+              </table>
+            </div>
+            <div class="pdf-h2" style="font-size:10px;background:#c2410c">ממד D — בחינה והערכה</div>
+            <div class="pdf-q" style="font-size:9.5px"><strong>18.</strong> "ברגע שגילוי הופך לדילמה — האדם לוקח אחריות." כיצד ליאל מדגימה זאת? נמק. (6 נק׳)<br><div class="pdf-box" style="height:28px"></div></div>
+          </div>
+        </div>
+
+        <!-- Rubric -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+          <div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:5px;letter-spacing:.5px">✅ מחוון בדיקה ⏳</div>
+          <div class="pdf-page" style="width:265px;font-size:10px">
+            <div class="pdf-h1" style="font-size:14px;border-color:#16a34a">מחוון בדיקה<br><span style="font-size:9px;font-weight:400;color:#16a34a">לשימוש המורה בלבד</span></div>
+            <div class="pdf-h2" style="font-size:10px;background:#6d28d9">ממד A — הבנת המשמעות הגלויה</div>
+            <div class="pdf-q" style="font-size:9.5px"><strong>שאלה 1</strong> — אמריקאי — 2 נק׳<br><span style="color:#16a34a;font-weight:700">✓ תשובה: א</span> — כתם נפט (פסקה 2 מפורשות)</div>
+            <div class="pdf-h2" style="font-size:10px;background:#16a34a">ממד B — הבנת המשמעות המשתמעת</div>
+            <div class="pdf-q" style="font-size:9.5px"><strong>שאלה 6</strong> — פתוח — 5 נק׳<br>
+              <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:3px;padding:5px;font-size:9px;margin-top:3px">
+                <div><span style="background:#dcfce7;padding:0 4px;border-radius:2px;font-size:8px;font-weight:700">2 נק׳</span> ליאל מבינה שהגילוי יפגע במשפחתה</div>
+                <div style="margin-top:2px"><span style="background:#dcfce7;padding:0 4px;border-radius:2px;font-size:8px;font-weight:700">2 נק׳</span> אסמכתא: "קפא לבה" / שם החברה</div>
+                <div style="margin-top:2px"><span style="background:#dcfce7;padding:0 4px;border-radius:2px;font-size:8px;font-weight:700">1 נק׳</span> ניסוח תקני בעברית</div>
+              </div>
+            </div>
+            <div class="pdf-h2" style="font-size:10px;background:#c2410c">ממד D — בחינה והערכה</div>
+            <div class="pdf-q" style="font-size:9.5px"><strong>שאלה 18</strong> — פתוח מורחב — 6 נק׳<br>
+              <div style="background:#fff7ed;border:1px solid #fde68a;border-radius:3px;padding:5px;font-size:9px;margin-top:3px">
+                <div><span style="background:#ffedd5;padding:0 4px;border-radius:2px;font-size:8px;font-weight:700">2 נק׳</span> קישור לציטוט ד"ר אמיר</div>
+                <div style="margin-top:2px"><span style="background:#ffedd5;padding:0 4px;border-radius:2px;font-size:8px;font-weight:700">2 נק׳</span> עמדה ברורה + נימוק</div>
+                <div style="margin-top:2px"><span style="background:#ffedd5;padding:0 4px;border-radius:2px;font-size:8px;font-weight:700">2 נק׳</span> אסמכתא מ-2 מקורות</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="slabel">הורדת PDF — 3 חוברות</div>
+</div>
+
+<!-- ═══════════ PDF: FULL TEXTS BOOKLET ═══════════ -->
+<div class="slide" id="s12">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/exam/m9x/export/texts — חוברת טקסטים.pdf</div></div>
+    <div class="bbody" style="background:#475569;display:flex;align-items:center;justify-content:center;padding:12px;overflow:auto">
+      <div class="pdf-page" style="width:580px;max-width:100%;font-size:11px">
+        <div style="text-align:center;border-bottom:3px solid #16a34a;padding-bottom:10px;margin-bottom:14px">
+          <div style="font-size:8px;letter-spacing:3px;color:#64748b;font-weight:700;margin-bottom:4px">מבחן הבנת הנקרא</div>
+          <div style="font-size:18px;font-weight:900;color:#0f172a">חוברת טקסטים</div>
+          <div style="font-size:10px;color:#64748b;margin-top:3px">כיתות ז׳–ט׳ | 60 דקות | נושא: מדע, טכנולוגיה ועתיד</div>
+          <div style="display:flex;justify-content:center;gap:16px;margin-top:8px;font-size:10px;color:#16a34a;font-weight:600">
+            <span>שם התלמיד/ה: ____________________________</span>
+            <span>כיתה: _______</span>
+            <span>תאריך: 15.3.2026</span>
+          </div>
+          <div style="margin-top:8px;background:#f0fdf4;border-radius:5px;padding:5px;font-size:10px;color:#16a34a">⚠️ יש לקרוא את שני הטקסטים לפני מענה על השאלות | ניתן לסמן וסמן בטקסטים</div>
+        </div>
+        <div style="background:#16a34a;color:white;padding:6px 12px;border-radius:5px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px;font-weight:800">📖 טקסט 1 — טקסט סיפורי</span>
+          <span style="font-size:10px;opacity:.8">612 מילים</span>
+        </div>
+        <div style="font-size:15px;font-weight:900;text-align:center;margin-bottom:8px;color:#0f172a">הדוח של ליאל</div>
+        <div style="font-size:10.5px;line-height:1.9;color:#1e293b;text-align:justify">
+          <p>המסך זהר באור כחלחל בחדרה האפל של ליאל. שתיים בלילה, והיא עדיין לא זזה מהכיסא. מול עיניה — תמונות לוויין של חוף הים התיכון, שעיבד האלגוריתם שפיתחה במשך חצי שנה. בין הכחול העמוק לחוף הצהוב הבהיק כתם כהה בוהק.</p>
+          <p style="margin-top:8px">ליאל לחצה להגדלה. הכתם לא היה עננה ולא צל — זה היה דלק. נפט. הדולף מצנרת תת-ימית. האלגוריתם שלה זיהה את הטמפרטורה, את הצפיפות הכימית, את הדפוס שחוזר על עצמו כבר שלושה שבועות. ספק אנושי לא היה.</p>
+          <p style="margin-top:8px">אבל כשפתחה את שכבת הנתונים של רשת הצנרת — קפא לבה. החברה שהצינור שייך לה הייתה "חוף כחול בע"מ" — המעביד של אביה. האדם שעבד שם עשרים שנה. שממשכורתו משלמים את שכר הלימוד שלה, את הנסיעות לאוניברסיטה.</p>
+          <p style="margin-top:8px">"ליאל," קראה אמה מהמסדרון, "מתי את הולכת לישון?" "עוד רגע," ענתה, קולה שטוח. עיניה לא זזו מהמסך.</p>
+          <p style="margin-top:8px">היא פתחה קובץ ריק. כתבה כותרת: "דוח אנומליה סביבתית — תאריך 14.3.2026". ואז עצרה. האצבעות ריחפו מעל המקלדת. מה שהמחשב גילה היה ברור. מה שהיא תעשה איתו — זה כבר לא עניינו של האלגוריתם. זה עניינה שלה.</p>
+          <p style="margin-top:8px">היא חשבה על שיעור הביולוגיה הים-תיכוני. על כמות הדגה שתיפגע. על ילדים שישחו בחוף הזה בקיץ. ואז חשבה על אביה, על הגאווה בעיניו כשסיפרה לו על הפרויקט.</p>
+          <p style="margin-top:8px">לבסוף, ליאל לקחה נשימה עמוקה. פתחה את האתר של המשרד להגנת הסביבה. "מי שיש לו מידע על זיהום ימי — מוזמן לדווח בטופס הבא." היא מילאה כל שדה. צירפה את הקובץ. ולחצה "שלח". המסך הציג: "הדיווח התקבל. תודה." ליאל סגרה את המחשב. בחוץ, ים התיכון ישן בלי לדעת שמישהו מגן עליו.</p>
+        </div>
+        <div style="border-top:2px solid #f59e0b;margin-top:14px;padding-top:10px">
+          <div style="background:#f59e0b;color:white;padding:6px 12px;border-radius:5px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;font-weight:800">📰 טקסט 2 — טקסט עיוני</span>
+            <span style="font-size:10px;opacity:.9">524 מילים</span>
+          </div>
+          <div style="font-size:15px;font-weight:900;text-align:center;margin-bottom:8px;color:#0f172a">עין מעל הגלים — בינה מלאכותית ואוקיאנים</div>
+          <div style="font-size:10.5px;line-height:1.9;color:#1e293b;text-align:justify">
+            <p>כל יום, מאות לוויינים מצלמים את האוקיאנוס ממרחק של כ-700 ק"מ. במשך שנים, רוב התמונות הצטברו בשרתים ולא נבדקו — פשוט כי לא היו מספיק מדענים לעבד אותן. היום, מודלי בינה מלאכותית מסוגלים לסרוק ביום אחד כמות תמונות שלוקחת לצוות מחקר שנה שלמה.</p>
+            <p style="margin-top:8px">המערכת PlasTrak, שפותחה בשיתוף NASA ו-ESA, מסוגלת לזהות כתמי נפט, גלי פלסטיק ושינויי טמפרטורה בדיוק של 94%. לפי מחקר שפורסם ב-Nature Climate Change, מאז פריסתה ב-2024 זוהו 312 אירועי זיהום שהיו נעלמים לגמרי לפני עידן ה-AI.</p>
+            <p style="margin-top:8px">אבל יש גבול ברור לכוחו של האלגוריתם. ד"ר יובל אמיר מאוניברסיטת חיפה מסביר: "הבינה המלאכותית מאתרת. היא לא שופטת. היא לא בוחרת. ברגע שגילוי הופך לדילמה — האדם הוא זה שצריך לקחת אחריות."</p>
+            <p style="margin-top:8px">בפועל, כל דוח שמייצרת המערכת עובר שרשרת בני אדם: מדען שמאמת, גורם רגולטורי שמחליט, ועיתונאי שמפרסם. ב-2025 לבדה, הובילו גילויים של AI לעיצום על 7 חברות ספנות בינלאומיות.</p>
+            <p style="margin-top:8px">הדילמה האתית מתעצמת כשהנתונים מעמידים אנשים בפני בחירות קשות: מה עושים כשהמזהם הוא גם ספק עבודה? זוהי הנקודה שבה הטכנולוגיה נדרשת להיעצר ולהעביר את הכדור לידיים האנושיות. השאלה הגדולה: לא "מה הוא יכול לראות?" — אלא "מה נעשה עם מה שהוא גילה?"</p>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:9px;color:#94a3b8;margin-top:10px;padding-top:6px;border-top:1px solid #e2e8f0">עמוד 1 מתוך 1 | מבחן הבנת הנקרא — "הדוח של ליאל" | כיתות ז׳–ט׳ | TAMI © 2026</div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">PDF — חוברת טקסטים (מלאה)</div>
+</div>
+
+<!-- ═══════════ PDF: FULL QUESTIONS ═══════════ -->
+<div class="slide" id="s13">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/exam/m9x/export/questions — חוברת שאלות.pdf</div></div>
+    <div class="bbody" style="background:#475569;display:flex;align-items:flex-start;justify-content:center;padding:12px;overflow:auto">
+      <div class="pdf-page" style="width:580px;max-width:100%;font-size:10.5px">
+        <div style="text-align:center;border-bottom:3px solid #16a34a;padding-bottom:8px;margin-bottom:12px">
+          <div style="font-size:16px;font-weight:900;color:#0f172a">חוברת שאלות</div>
+          <div style="font-size:10px;color:#64748b">"הדוח של ליאל" | כיתות ז׳–ט׳ | 100 נקודות | 60 דקות</div>
+          <div style="display:flex;justify-content:center;gap:14px;margin-top:6px;font-size:10px">
+            <span>שם: ____________________</span><span>כיתה: _______</span><span>תאריך: ___________</span>
+          </div>
+        </div>
+        <div class="pdf-h2">ממד A — הבנת המשמעות הגלויה (16 נקודות)</div>
+        <div class="pdf-q"><strong>1.</strong> מה זיהה האלגוריתם של ליאל? (2 נק׳)<br>
+          <div class="pdf-opt">א. כתם נפט דולף מצנרת תת-ימית</div>
+          <div class="pdf-opt">ב. עלייה בטמפרטורת מי הים</div>
+          <div class="pdf-opt">ג. ריכוז פלסטיק גבוה</div>
+          <div class="pdf-opt">ד. ירידה בריכוז החמצן</div>
+        </div>
+        <div class="pdf-q"><strong>2.</strong> השלימי: האלגוריתם זיהה את ___________, את ___________, ואת ___________. (3 נק׳)</div>
+        <div class="pdf-q"><strong>3.</strong> ציינו שני פרטים מהמאמר המוכיחים כי AI יעיל יותר ממדענים בסריקת תמונות לוויין. (4 נק׳)<br>
+          <div style="border:1px solid #94a3b8;border-radius:3px;height:32px;margin-top:4px"></div>
+        </div>
+        <div class="pdf-q"><strong>4.</strong> כמה אירועי זיהום זיהתה PlasTrak מאז השקתה? (2 נק׳) _________ אירועים בשנה __________</div>
+        <div class="pdf-h2" style="background:#16a34a">ממד B — הבנת המשמעות המשתמעת (18 נקודות)</div>
+        <div class="pdf-q"><strong>5.</strong> מדוע "קפא לב" ליאל כשגילתה את שם החברה? מה מגלה על דמותה? (5 נק׳)<br>
+          <div class="pdf-box"></div>
+        </div>
+        <div class="pdf-q"><strong>6.</strong> מדוע ליאל עצרה לפני שלחצה "שלח"? מה עבר בראשה? (4 נק׳)<br>
+          <div class="pdf-box"></div>
+        </div>
+        <div class="pdf-q"><strong>7.</strong> מה כוונת ד"ר אמיר באומרו "הבינה המלאכותית מאתרת, לא שופטת"? (4 נק׳)<br>
+          <div class="pdf-box"></div>
+        </div>
+        <div class="pdf-h2" style="background:#15803d">ממד C — פרשנות, עיבוד ויישום (24 נקודות)</div>
+        <div class="pdf-q"><strong>8.</strong> כיצד ציטוט ד"ר אמיר ("הבינה המלאכותית מאתרת — לא שופטת") בא לידי ביטוי בסיפורה של ליאל? (4 נק׳)<br>
+          <div class="pdf-box"></div>
+        </div>
+        <div class="pdf-q"><strong>9.</strong> השלם/י טבלה: כיצד הסיפור והמאמר מציגים תפקיד AI ותפקיד האדם? (6 נק׳)<br>
+          <table style="width:100%;font-size:9.5px;border-collapse:collapse;margin-top:4px">
+            <tr style="background:#f1f5f9"><th style="border:1px solid #94a3b8;padding:3px">היבט</th><th style="border:1px solid #94a3b8;padding:3px">מהסיפור</th><th style="border:1px solid #94a3b8;padding:3px">מהמאמר</th></tr>
+            <tr><td style="border:1px solid #94a3b8;padding:3px;font-weight:600">תפקיד ה-AI</td><td style="border:1px solid #94a3b8;height:24px"></td><td style="border:1px solid #94a3b8"></td></tr>
+            <tr><td style="border:1px solid #94a3b8;padding:3px;font-weight:600">תפקיד האדם</td><td style="border:1px solid #94a3b8;height:24px"></td><td style="border:1px solid #94a3b8"></td></tr>
+            <tr><td style="border:1px solid #94a3b8;padding:3px;font-weight:600">דוגמה ספציפית</td><td style="border:1px solid #94a3b8;height:24px"></td><td style="border:1px solid #94a3b8"></td></tr>
+          </table>
+        </div>
+        <div class="pdf-q"><strong>10.</strong> סמן/י אמת (א) / שקר (ש) ותקן/י במקרה של שקר: (4 נק׳)<br>
+          <div style="font-size:10px;margin-top:4px">
+            <div style="margin-bottom:3px">___ א. PlasTrak מגיעה לדיוק של 94% בזיהוי זיהום ימי</div>
+            <div style="margin-bottom:3px">___ ב. ליאל פנתה לאביה לבקש עצה לפני שדיווחה</div>
+            <div>___ ג. ב-2025 הובילו גילויי AI לעיצום על 7 חברות ספנות</div>
+          </div>
+        </div>
+        <div class="pdf-h2" style="background:#c2410c">ממד D — בחינה והערכה (22 נקודות)</div>
+        <div class="pdf-q"><strong>11.</strong> ד"ר אמיר: "ברגע שגילוי הופך לדילמה — האדם לוקח אחריות." כיצד ליאל מדגימה זאת? האם פעלה נכון? נמק/י. (6 נק׳)<br>
+          <div class="pdf-box" style="height:52px"></div>
+        </div>
+        <div class="pdf-q"><strong>12.</strong> כיצד ממצאי מחקר ה-AI במאמר מסבירים את הדילמה שעומדת בפני ליאל? השתמש/י בנתונים ספציפיים. (6 נק׳)<br>
+          <div class="pdf-box" style="height:52px"></div>
+        </div>
+        <div style="text-align:center;font-size:9px;color:#94a3b8;margin-top:10px;padding-top:6px;border-top:1px solid #e2e8f0">עמוד 1 מתוך 2 | חוברת שאלות — "הדוח של ליאל" | TAMI © 2026</div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">PDF — חוברת שאלות (מלאה)</div>
+</div>
+
+<!-- ═══════════ PDF: FULL RUBRIC ═══════════ -->
+<div class="slide" id="s14">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/exam/m9x/export/rubric — מחוון.pdf</div></div>
+    <div class="bbody" style="background:#475569;display:flex;align-items:flex-start;justify-content:center;padding:12px;overflow:auto">
+      <div class="pdf-page" style="width:580px;max-width:100%;font-size:10.5px">
+        <div style="text-align:center;border-bottom:3px solid #16a34a;padding-bottom:8px;margin-bottom:12px">
+          <div style="font-size:16px;font-weight:900;color:#0f172a">מחוון בדיקה</div>
+          <div style="font-size:10px;color:#16a34a;font-weight:700">"הדוח של ליאל" | לשימוש המורה בלבד</div>
+          <div style="font-size:10px;color:#64748b">כיתות ז׳–ט׳ | 100 נקודות | TAMI © 2026</div>
+        </div>
+        <div class="pdf-h2" style="background:#6d28d9">ממד A — הבנת המשמעות הגלויה (16 נקודות)</div>
+        <div class="pdf-q"><strong>שאלה 1</strong> — בחירה מרובה — 2 נק׳ <span style="color:#16a34a;font-weight:700">✓ תשובה: א</span><br><span style="font-size:10px;color:#64748b">כתם נפט דולף מצנרת תת-ימית — מופיע מפורשות בפסקה 2 של הסיפור</span></div>
+        <div class="pdf-q"><strong>שאלה 2</strong> — השלמה — 3 נק׳ (נק׳ לכל פרט נכון)<br>
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:5px;font-size:10px;margin-top:3px"><span style="font-weight:700;color:#15803d">תשובות מקובלות:</span> הטמפרטורה / הצפיפות הכימית / הדפוס החוזר</div>
+        </div>
+        <div class="pdf-q"><strong>שאלה 3</strong> — מציאת מידע — 4 נק׳ (2 נק׳ לכל פרט)
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:5px;font-size:10px;margin-top:3px"><div style="font-weight:700;color:#15803d">פרטים מקובלים (כל 2 מהרשימה):</div>
+          <div>• סורק ביום אחד כמות שלוקחת לצוות שנה</div><div>• דיוק 94% בזיהוי</div><div>• זוהו 312 אירועי זיהום מאז 2024</div></div>
+        </div>
+        <div class="pdf-h2" style="background:#16a34a">ממד B — הבנת המשמעות המשתמעת (18 נקודות)</div>
+        <div class="pdf-q"><strong>שאלה 5</strong> — פתוח — 5 נק׳
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:6px;font-size:10px;margin-top:3px">
+            <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 8px">
+              <span style="background:#dcfce7;padding:0 5px;border-radius:2px;font-size:9px;font-weight:700">2 נק׳</span><span>ליאל מבינה שדיווח עלול לפגוע בעבודת אביה ובפרנסת המשפחה</span>
+              <span style="background:#dcfce7;padding:0 5px;border-radius:2px;font-size:9px;font-weight:700">2 נק׳</span><span>אסמכתא: "קפא לבה" / "החברה שמעסיקה את אביה" / "שממשכורתו משלמים..."</span>
+              <span style="background:#dcfce7;padding:0 5px;border-radius:2px;font-size:9px;font-weight:700">1 נק׳</span><span>ניסוח מדויק בעברית תקנית</span>
+            </div>
+          </div>
+        </div>
+        <div class="pdf-q"><strong>שאלה 7</strong> — הסבר ציטוט — 4 נק׳
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:6px;font-size:10px;margin-top:3px">
+            <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 8px">
+              <span style="background:#dcfce7;padding:0 5px;border-radius:2px;font-size:9px;font-weight:700">2 נק׳</span><span>ה-AI מציג נתונים אך אינו מקבל החלטות ערכיות</span>
+              <span style="background:#dcfce7;padding:0 5px;border-radius:2px;font-size:9px;font-weight:700">2 נק׳</span><span>דוגמה ספציפית מהמאמר (PlasTrak / שרשרת בני אדם)</span>
+            </div>
+          </div>
+        </div>
+        <div class="pdf-h2" style="background:#15803d">ממד C — פרשנות, עיבוד ויישום (24 נקודות)</div>
+        <div class="pdf-q"><strong>שאלה 9</strong> — טבלה — 6 נק׳ (2 נק׳ לכל שורה מלאה)
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:6px;font-size:10px;margin-top:3px">
+            <table style="width:100%;border-collapse:collapse;font-size:9.5px">
+              <tr style="background:#dcfce7"><th style="border:1px solid #bbf7d0;padding:2px 4px">היבט</th><th style="border:1px solid #bbf7d0;padding:2px 4px">מהסיפור</th><th style="border:1px solid #bbf7d0;padding:2px 4px">מהמאמר</th></tr>
+              <tr><td style="border:1px solid #bbf7d0;padding:2px 4px;font-weight:600">AI</td><td style="border:1px solid #bbf7d0;padding:2px 4px">מזהה כתמי נפט</td><td style="border:1px solid #bbf7d0;padding:2px 4px">סורק תמונות לוויין</td></tr>
+              <tr><td style="border:1px solid #bbf7d0;padding:2px 4px;font-weight:600">האדם</td><td style="border:1px solid #bbf7d0;padding:2px 4px">מחליט אם לדווח</td><td style="border:1px solid #bbf7d0;padding:2px 4px">מאמת ומחליט</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="pdf-h2" style="background:#c2410c">ממד D — בחינה והערכה (22 נקודות)</div>
+        <div class="pdf-q"><strong>שאלה 11</strong> — פתוח מורחב — 6 נק׳
+          <div style="background:#fff7ed;border:1px solid #fde68a;border-radius:4px;padding:6px;font-size:10px;margin-top:3px">
+            <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 8px">
+              <span style="background:#ffedd5;padding:0 5px;border-radius:2px;font-size:9px;font-weight:700">2 נק׳</span><span>קישור מדויק לציטוט ד"ר אמיר</span>
+              <span style="background:#ffedd5;padding:0 5px;border-radius:2px;font-size:9px;font-weight:700">2 נק׳</span><span>עמדה ברורה (כן/לא) + נימוק משכנע</span>
+              <span style="background:#ffedd5;padding:0 5px;border-radius:2px;font-size:9px;font-weight:700">2 נק׳</span><span>אסמכתא מ-2 טקסטים שונים</span>
+            </div>
+            <div style="margin-top:5px;color:#92400e;font-weight:600">דוגמה לתשובה: "ליאל מדגימה את דברי ד"ר אמיר — האלגוריתם גילה את הנפט, אך ליאל, האדם, לקחה אחריות ודיווחה למרות הקושי האישי. לדעתי פעלה נכון כי..."</div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:9px;color:#94a3b8;margin-top:10px;padding-top:6px;border-top:1px solid #e2e8f0;color:#dc2626;font-weight:700">⚠️ מחוון זה מיועד לשימוש המורה בלבד — לא להפצה לתלמידים | TAMI © 2026</div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">PDF — מחוון בדיקה (מלא)</div>
+</div>
+
+<!-- ═══════════ 8 EXAM READY ═══════════ -->
+<div class="slide" id="s15">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/exam/m9x/ready</div></div>
+    <div class="bbody" style="overflow:auto;padding:14px 24px">
+      <div style="text-align:center;margin-bottom:12px">
+        <div style="width:40px;height:40px;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:19px;margin:0 auto 5px">✓</div>
+        <div style="font-size:18px;font-weight:800">המבחן מוכן!</div>
+        <div style="font-size:10.5px;color:#64748b">שלב 5: פרסום וניתוח</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+        <div class="card" style="text-align:center">
+          <div style="font-weight:700;margin-bottom:8px;font-size:12px">🔑 קוד כניסה לתלמידים</div>
+          <div style="font-size:40px;font-weight:900;letter-spacing:8px;color:#16a34a;font-family:monospace;padding:10px;background:#f0fdf4;border-radius:9px;border:2px dashed #bbf7d0">OCEAN9</div>
+          <div style="font-size:10px;color:#64748b;margin-top:4px">tami.app/student</div>
+          <button class="btn bp bsm" style="margin-top:7px">📋 העתק קוד</button>
+        </div>
+        <div class="card">
+          <div style="font-weight:700;margin-bottom:8px;font-size:12px">📄 הורדת חוברות PDF</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <button class="btn bs bsm">📖 טקסטים</button>
+            <button class="btn bs bsm">📝 שאלות</button>
+            <button class="btn bs bsm">✅ מחוון</button>
+            <button class="btn bs bsm">📊 מפרט</button>
+            <button class="btn bs bsm" style="grid-column:span 2">🔑 גרסת מורה (עם תשובות)</button>
+          </div>
+        </div>
+        <div class="card" style="grid-column:span 2">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-weight:700;font-size:12px">סיכום — הדוח של ליאל</div>
+              <div style="display:flex;gap:12px;margin-top:5px;font-size:10.5px;color:#64748b">
+                <span>📖 2 טקסטים · 1,136 מילים</span><span>❓ 23 שאלות</span><span>🎯 כיתות ז׳–ט׳</span><span>💯 100 נקודות</span><span>⏱️ 60 דקות</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn bs bsm">📊 אנליטיקה</button>
+              <button class="btn bp bsm">📤 שתף</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">שלב 5 — פרסום</div>
+</div>
+
+<!-- ═══════════ 9 STUDENT ═══════════ -->
+<div class="slide" id="s16">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/student/exam/s77</div></div>
+    <div class="bbody" style="display:grid;grid-template-columns:55% 45%;overflow:hidden">
+      <!-- TEXT PANEL (scrollable) -->
+      <div style="border-left:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden;background:#fffbeb">
+        <!-- Text header -->
+        <div style="padding:8px 14px;background:white;border-bottom:1px solid #e2e8f0;flex-shrink:0;display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;gap:6px;align-items:center">
+            <span class="bdg bb" style="font-size:10px">📖 הדוח של ליאל</span>
+            <span class="bdg" style="background:#f0fdf4;color:#15803d;font-size:10px">● גלול לקרוא</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:9.5px;color:#94a3b8">⏱️ 44:18</span>
+            <span style="font-size:9px;background:#f1f5f9;border-radius:4px;padding:2px 6px;color:#64748b">↕ גלול</span>
+          </div>
+        </div>
+        <!-- Scrollable text area - shown mid-scroll -->
+        <div style="flex:1;overflow:hidden;position:relative">
+          <!-- Fake scrollbar -->
+          <div style="position:absolute;left:0;top:0;bottom:0;width:6px;background:#f1f5f9;z-index:10">
+            <div style="width:6px;height:40%;background:#cbd5e1;border-radius:3px;margin-top:28%"></div>
+          </div>
+          <!-- Text (positioned mid-scroll) -->
+          <div style="padding:12px 14px 12px 18px;font-size:11px;line-height:2;color:#1e293b;margin-top:-80px">
+            <div style="font-size:13px;font-weight:800;color:#14532d;margin-bottom:10px;margin-top:0">הדוח של ליאל</div>
+            <p style="margin-bottom:8px">המסך זהר באור כחלחל בחדרה האפל של ליאל. שתיים בלילה, והיא עדיין לא זזה מהכיסא. מול עיניה — תמונות לוויין של חוף הים התיכון, שעיבד האלגוריתם שפיתחה במשך חצי שנה. בין הכחול העמוק לחוף הצהוב הבהיק כתם כהה בוהק.</p>
+            <p style="margin-bottom:8px">ליאל לחצה להגדלה. <mark style="background:#fde68a">הכתם לא היה עננה ולא צל — זה היה דלק. נפט. הדולף מצנרת תת-ימית.</mark> האלגוריתם שלה זיהה את הטמפרטורה, את הצפיפות הכימית, את הדפוס שחוזר כבר שלושה שבועות.</p>
+            <p style="margin-bottom:8px;padding:6px 10px;background:rgba(254,243,199,.5);border-right:3px solid #f59e0b;border-radius:0 5px 5px 0"><mark style="background:#bbf7d0">אבל כשפתחה את שכבת הנתונים של רשת הצנרת — קפא לבה.</mark> החברה שהצינור שייך לה הייתה "חוף כחול בע"מ" — המעביד של אביה. האדם שעבד שם עשרים שנה.</p>
+            <p style="margin-bottom:8px">"ליאל," קראה אמה מהמסדרון, "מתי את הולכת לישון?"<br>"עוד רגע," ענתה, קולה שטוח. עיניה לא זזו מהמסך.</p>
+            <p style="margin-bottom:8px">היא פתחה קובץ ריק. כתבה: "דוח אנומליה סביבתית — 14.3.2026". ואז עצרה. האצבעות ריחפו מעל המקלדת.</p>
+            <p><mark style="background:#ddd6fe">מה שהמחשב גילה היה ברור. מה שהיא תעשה איתו — זה כבר לא עניינו של האלגוריתם.</mark></p>
+          </div>
+          <!-- Scroll fade at bottom -->
+          <div style="position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,#fffbeb);pointer-events:none"></div>
+          <!-- Scroll down hint -->
+          <div style="position:absolute;bottom:5px;left:50%;transform:translateX(-50%);font-size:9.5px;color:#94a3b8;display:flex;align-items:center;gap:3px;background:rgba(255,255,255,.8);padding:2px 8px;border-radius:9999px">↓ גלול להמשך הסיפור</div>
+        </div>
+        <!-- Text tabs: switch between texts -->
+        <div style="flex-shrink:0;border-top:1px solid #e2e8f0;display:flex;background:white">
+          <div style="flex:1;padding:7px;text-align:center;font-size:10.5px;font-weight:700;color:#16a34a;border-bottom:2px solid #16a34a;background:#f0fdf4">📖 הדוח של ליאל</div>
+          <div style="flex:1;padding:7px;text-align:center;font-size:10.5px;color:#64748b;border-bottom:2px solid transparent;cursor:pointer">📰 עין מעל הגלים</div>
+        </div>
+      </div>
+      <!-- QUESTIONS PANEL -->
+      <div style="padding:10px 11px;display:flex;flex-direction:column;overflow:hidden;background:#f8fafc">
+        <!-- Progress -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-shrink:0">
+          <div style="font-size:10px;font-weight:700;color:#475569">שאלה 6 מתוך 23</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="pb" style="width:90px"><div class="pf" style="width:26%"></div></div>
+            <span style="font-size:9.5px;color:#64748b">26%</span>
+          </div>
+        </div>
+        <!-- Question card -->
+        <div class="qcard" style="border-color:#16a34a;flex:1;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:7px;flex-shrink:0">
+            <div class="qn">6</div>
+            <span class="dimB" style="font-size:9.5px">B — הבנת המשמעות המשתמעת</span>
+            <span style="font-size:9.5px;color:#64748b;margin-right:auto">5 נקודות</span>
+          </div>
+          <div style="font-size:11.5px;font-weight:600;margin-bottom:8px;line-height:1.65;flex-shrink:0">מדוע "קפא לב" ליאל כשגילתה את שם החברה? מה הדבר מגלה על דמותה?</div>
+          <div style="font-size:10px;color:#64748b;margin-bottom:5px;flex-shrink:0">💡 השתמשי בטקסט שלצד — ניתן לגלול לחפש אסמכתא</div>
+          <textarea style="width:100%;border:1.5px solid #bbf7d0;border-radius:6px;padding:7px;font-size:11px;font-family:inherit;resize:none;flex:1;min-height:80px;color:#334155;line-height:1.8;background:#fffbeb" readonly>ליאל הבינה שאם תדווח על הזיהום, היא עלולה לפגוע בעבודה של אביה. זה מגלה שהיא אחראית ואמפתית — היא חושבת על המשפחה לפני שהיא מחליטה.</textarea>
+          <div style="flex-shrink:0;margin-top:7px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <span style="font-size:9.5px;color:#22c55e;display:flex;align-items:center;gap:3px"><span style="width:7px;height:7px;background:#22c55e;border-radius:50%;display:inline-block"></span> נשמר אוטומטית</span>
+              <span style="font-size:9.5px;color:#64748b">142 תווים</span>
+            </div>
+            <div style="display:flex;gap:5px">
+              <button class="btn bs bsm" style="flex:1;justify-content:center">← קודמת</button>
+              <button class="btn bp bsm" style="flex:1;justify-content:center">הבאה (7) →</button>
+            </div>
+          </div>
+        </div>
+        <!-- Mini question nav -->
+        <div style="flex-shrink:0;margin-top:7px;background:white;border-radius:7px;padding:6px 8px;border:1px solid #e2e8f0">
+          <div style="font-size:9.5px;color:#64748b;margin-bottom:4px;font-weight:600">ניווט מהיר בין שאלות:</div>
+          <div style="display:flex;gap:3px;flex-wrap:wrap">
+            <span style="width:20px;height:20px;background:#22c55e;color:white;border-radius:4px;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700">1</span>
+            <span style="width:20px;height:20px;background:#22c55e;color:white;border-radius:4px;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700">2</span>
+            <span style="width:20px;height:20px;background:#22c55e;color:white;border-radius:4px;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700">3</span>
+            <span style="width:20px;height:20px;background:#22c55e;color:white;border-radius:4px;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700">4</span>
+            <span style="width:20px;height:20px;background:#22c55e;color:white;border-radius:4px;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700">5</span>
+            <span style="width:20px;height:20px;background:#16a34a;color:white;border-radius:4px;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 0 0 2px #bbf7d0">6</span>
+            <span style="width:20px;height:20px;background:#f1f5f9;color:#94a3b8;border-radius:4px;font-size:9px;display:flex;align-items:center;justify-content:center">7</span>
+            <span style="width:20px;height:20px;background:#f1f5f9;color:#94a3b8;border-radius:4px;font-size:9px;display:flex;align-items:center;justify-content:center">8</span>
+            <span style="width:20px;height:20px;background:#f1f5f9;color:#94a3b8;border-radius:4px;font-size:9px;display:flex;align-items:center;justify-content:center">...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">תלמיד — טקסט + שאלות (גלילה)</div>
+</div>
+
+<!-- ═══════════ 10 RESULTS ═══════════ -->
+<div class="slide" id="s17">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/student/results/s77</div></div>
+        <div class="bbody" style="overflow:auto;padding:13px 22px;background:linear-gradient(180deg,#f0fdf4,#f8fafc)">
+      <div style="text-align:center;margin-bottom:12px"><div style="font-size:34px;margin-bottom:4px">📊</div><div style="font-size:19px;font-weight:800">הדוח האישי של ליה</div><div style="font-size:10.5px;color:#64748b">מבחן "הדוח של ליאל" | כיתה ט׳1 | 15.3.2026</div></div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:11px">
+        <div class="sc"><div class="sn" style="color:#16a34a">84</div><div class="sl">ציון סופי</div></div>
+        <div class="sc"><div class="sn" style="font-size:14px;color:#16a34a">73.5</div><div class="sl">ממוצע הכיתה</div></div>
+        <div class="sc"><div class="sn" style="color:#16a34a;font-size:14px">+10.5</div><div class="sl">מעל הממוצע</div></div>
+        <div class="sc"><div class="sn">19/23</div><div class="sl">שאלות נכונות</div></div>
+        <div class="sc"><div class="sn">52</div><div class="sl">דקות</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="card">
+          <div style="font-weight:700;font-size:11.5px;margin-bottom:8px">ביצועים לפי ממד הבנה</div>
+                    <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px">
+            <span style="font-size:10px;width:130px;color:#6d28d9;font-weight:700">A — הבנה גלויה</span>
+            <div class="pb" style="flex:1"><div class="pf" style="width:93%;background:linear-gradient(90deg,#16a34a,#22c55e)"></div></div>
+            <span style="font-size:10.5px;font-weight:800;color:#16a34a;width:34px">93%</span>
+            <span style="font-size:9px;color:#94a3b8">כיתה: 88%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px">
+            <span style="font-size:10px;width:130px;color:#16a34a;font-weight:700">B — הבנה משתמעת</span>
+            <div class="pb" style="flex:1"><div class="pf" style="width:86%"></div></div>
+            <span style="font-size:10.5px;font-weight:800;color:#16a34a;width:34px">86%</span>
+            <span style="font-size:9px;color:#94a3b8">כיתה: 79%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px">
+            <span style="font-size:10px;width:130px;color:#15803d;font-weight:700">C — פרשנות ויישום</span>
+            <div class="pb" style="flex:1"><div class="pf" style="width:78%"></div></div>
+            <span style="font-size:10.5px;font-weight:800;color:#15803d;width:34px">78%</span>
+            <span style="font-size:9px;color:#94a3b8">כיתה: 71%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px">
+            <span style="font-size:10px;width:130px;color:#c2410c;font-weight:700">D — בחינה והערכה</span>
+            <div class="pb" style="flex:1"><div class="pf" style="width:68%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div>
+            <span style="font-size:10.5px;font-weight:800;color:#f59e0b;width:34px">68%</span>
+            <span style="font-size:9px;color:#94a3b8">כיתה: 54%</span>
+          </div>
+        </div>
+        <div class="card" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
+          <div style="font-weight:700;font-size:11.5px;margin-bottom:6px">💡 המלצה אישית</div>
+          <p style="font-size:11px;line-height:1.7;color:#16a34a"><strong>ליה, ציון 84 — מעל ממוצע הכיתה (73.5) ב-10.5 נקודות!</strong><br>A ו-B — מעל 85%. C — 78%. D — 68% (ממוצע כיתה: 54%). הצלחה בשאלות ממד A ו-B, עם מקום לשיפור בממד D.</p>
+          <div style="margin-top:7px;display:flex;gap:5px;flex-wrap:wrap">
+            <span class="bdg bg2" style="font-size:10px">A: 93% ✓</span>
+            <span class="bdg bg2" style="font-size:10px">B: 86% ✓</span>
+            <span class="bdg" style="background:#fffbeb;color:#d97706;font-size:10px">C: 78%</span>
+            <span class="bdg bo" style="font-size:10px">D: 68% — לחזק</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">תלמיד — תוצאות ופרופיל</div>
+</div>
+
+<!-- ═══════════ 11 ANALYTICS ═══════════ -->
+<div class="slide" id="s18">
+  <div class="browser">
+    <div class="bbar"><div class="dots"><span></span><span></span><span></span></div><div class="url">tami.app/teacher/exam/m9x/analytics</div></div>
+    <div class="bbody" style="overflow:auto;padding:11px 18px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px">📊 אנליטיקה — "הדוח של ליאל" | כיתה ט׳1</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:10px">
+        <div class="sc"><div class="sn">28</div><div class="sl">תלמידים</div></div>
+        <div class="sc"><div class="sn">73.5</div><div class="sl">ממוצע</div></div>
+        <div class="sc"><div class="sn">11.4</div><div class="sl">סטיית תקן</div></div>
+        <div class="sc"><div class="sn" style="color:#16a34a">11</div><div class="sl">מצטיינים</div></div>
+        <div class="sc"><div class="sn" style="color:#ef4444">4</div><div class="sl">זקוקים לתמיכה</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:9px;margin-bottom:9px">
+        <div class="card">
+          <div style="font-weight:700;font-size:11.5px;margin-bottom:8px">התפלגות ממדי הבנה — כיתה</div>
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px"><span class="dimA" style="width:130px;font-size:9px">A — הבנה גלויה</span><div class="pb" style="flex:1"><div class="pf" style="width:88%;background:linear-gradient(90deg,#6d28d9,#8b5cf6)"></div></div><span style="font-size:10px;font-weight:700;width:26px;color:#6d28d9">88%</span></div>
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px"><span class="dimB" style="width:130px;font-size:9px">B — הבנה משתמעת</span><div class="pb" style="flex:1"><div class="pf" style="width:79%"></div></div><span style="font-size:10px;font-weight:700;width:26px;color:#16a34a">79%</span></div>
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px"><span class="dimC" style="width:130px;font-size:9px">C — פרשנות ויישום</span><div class="pb" style="flex:1"><div class="pf" style="width:71%"></div></div><span style="font-size:10px;font-weight:700;width:26px;color:#15803d">71%</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span class="dimD" style="width:130px;font-size:9px">D — בחינה והערכה</span><div class="pb" style="flex:1"><div class="pf" style="width:54%;background:linear-gradient(90deg,#c2410c,#f97316)"></div></div><span style="font-size:10px;font-weight:700;width:26px;color:#c2410c">54%</span></div>
+        </div>
+        <div class="card">
+          <div style="font-weight:700;font-size:11.5px;margin-bottom:8px">התפלגות רמות</div>
+          <div style="display:flex;align-items:flex-end;gap:8px;height:65px">
+            <div style="flex:1;text-align:center"><div style="background:#ef4444;height:24%;border-radius:3px 3px 0 0"></div><div style="font-size:9px;color:#64748b;margin-top:2px">רמה 1</div><div style="font-size:10px;font-weight:700">4</div></div>
+            <div style="flex:1;text-align:center"><div style="background:#f59e0b;height:46%;border-radius:3px 3px 0 0"></div><div style="font-size:9px;color:#64748b;margin-top:2px">רמה 2</div><div style="font-size:10px;font-weight:700">7</div></div>
+            <div style="flex:1;text-align:center"><div style="background:#3b82f6;height:72%;border-radius:3px 3px 0 0"></div><div style="font-size:9px;color:#64748b;margin-top:2px">רמה 3</div><div style="font-size:10px;font-weight:700">6</div></div>
+            <div style="flex:1;text-align:center"><div style="background:#16a34a;height:100%;border-radius:3px 3px 0 0"></div><div style="font-size:9px;color:#64748b;margin-top:2px">רמה 4</div><div style="font-size:10px;font-weight:700">11</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-weight:700;font-size:11.5px;margin-bottom:7px">שאלות בעייתיות</div>
+          <div style="font-size:10px">
+            <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;color:#ef4444;font-weight:600"><span>🔴 ש׳18 ממד D פתוח</span><span>26%</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;color:#f59e0b;font-weight:600"><span>🟡 ש׳23 ממד D בין-טקסטי</span><span>39%</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;color:#22c55e"><span>🟢 ש׳1 ממד A אמריקאי</span><span>97%</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0;color:#22c55e"><span>🟢 ש׳4 ממד A עובדתי</span><span>93%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;font-size:11.5px;margin-bottom:7px">פרופילי תלמידים</div>
+        <table style="width:100%;font-size:10px;border-collapse:collapse">
+          <tr style="background:#f8fafc;font-weight:700;color:#475569"><th style="padding:3px 7px;text-align:right">שם</th><th style="padding:3px 7px">ציון</th><th>רמה</th><th>A גלויה</th><th>B משתמעת</th><th>C פרשנות</th><th>D הערכה</th><th>המלצה</th></tr>
+          <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:3px 7px;font-weight:600">ליה כהן</td><td style="padding:3px;text-align:center;color:#16a34a;font-weight:700">84</td><td style="text-align:center"><span class="bdg bg2" style="font-size:8px">4</span></td><td style="text-align:center">93%</td><td style="text-align:center">86%</td><td style="text-align:center">78%</td><td style="text-align:center;color:#f59e0b;font-weight:600">68%</td><td style="font-size:9px;color:#f59e0b">חזקי D</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:3px 7px;font-weight:600">עמית לוי</td><td style="padding:3px;text-align:center;color:#f59e0b;font-weight:700">51</td><td style="text-align:center"><span class="bdg bo" style="font-size:8px">2</span></td><td style="text-align:center">68%</td><td style="text-align:center">50%</td><td style="text-align:center">38%</td><td style="text-align:center;color:#ef4444;font-weight:600">29%</td><td style="font-size:9px;color:#ef4444">קריאה מודרכת</td></tr>
+          <tr><td style="padding:3px 7px;font-weight:600">נועה אברהם</td><td style="padding:3px;text-align:center;color:#16a34a;font-weight:700">91</td><td style="text-align:center"><span class="bdg bg2" style="font-size:8px">4</span></td><td style="text-align:center">97%</td><td style="text-align:center">92%</td><td style="text-align:center">88%</td><td style="text-align:center;color:#16a34a;font-weight:600">82%</td><td style="font-size:9px;color:#16a34a">אתגר מחקרי</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">מורה — אנליטיקה</div>
+</div>
+
+<!-- ═══════════ 12 CLOSING ═══════════ -->
+<div class="slide" id="s19" style="background:linear-gradient(135deg,#0f172a,#14532d,#0f172a);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:white">
+  <div style="font-size:42px;font-weight:900;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:5px">TAMI</div>
+  <div style="font-size:16px;color:#94a3b8;margin-bottom:28px">מחולל מבחני הבנת הנקרא · תקני ראמ"ה</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:11px;max-width:740px">
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:10px;padding:15px;text-align:center"><div style="font-size:24px;margin-bottom:5px">⚡</div><div style="font-weight:700;font-size:12px">מהיר</div><div style="font-size:10px;color:#94a3b8;margin-top:2px">מבחן תוך דקות</div></div>
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:10px;padding:15px;text-align:center"><div style="font-size:24px;margin-bottom:5px">🎯</div><div style="font-weight:700;font-size:12px">4 ממדים</div><div style="font-size:10px;color:#94a3b8;margin-top:2px">A גלוי · B משתמע · C פרשנות · D הערכה</div></div>
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:10px;padding:15px;text-align:center"><div style="font-size:24px;margin-bottom:5px">📄</div><div style="font-weight:700;font-size:12px">PDF מלא</div><div style="font-size:10px;color:#94a3b8;margin-top:2px">שאלות · מחוון · מפרט</div></div>
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:10px;padding:15px;text-align:center"><div style="font-size:24px;margin-bottom:5px">📊</div><div style="font-weight:700;font-size:12px">פרופיל</div><div style="font-size:10px;color:#94a3b8;margin-top:2px">לכל תלמיד · אנליטיקה לכיתה</div></div>
+  </div>
+  <div style="margin-top:32px;font-size:20px;font-weight:700;color:#60a5fa">מהמורה לתלמיד — הכל במקום אחד ✨</div>
+</div>
+
+<button class="nav-prev" onclick="go(cur+1)">‹</button>
+<button class="nav-next" onclick="go(cur-1)">›</button>
+<div id="dn"></div>
+</div>
+
+<script>
+const N=20;let cur=0,tmr=null;
+function sc(){const s=Math.min(innerWidth/1280,innerHeight/720);document.getElementById('stage').style.transform='translate(-50%,-50%) scale('+s+')';}
+sc();window.addEventListener('resize',sc);
+const dn=document.getElementById('dn');
+for(let i=0;i<N;i++){const d=document.createElement('div');d.className='nd'+(i===0?' on':'');d.onclick=()=>go(i);dn.appendChild(d);}
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=((n%N)+N)%N;
+  document.getElementById('s'+cur).classList.add('active');
+  document.querySelectorAll('.nd').forEach((d,i)=>d.classList.toggle('on',i===cur));
+  onEnter(cur);reset();
+}
+function onEnter(n){
+  if(n===7){
+    const el=document.getElementById('tt');if(!el)return;el.textContent='';
+    const t='המסך זהר באור כחלחל בחדרה האפל של ליאל. שתיים בלילה, והיא עדיין לא זזה מהכיסא. מול עיניה — תמונות לוויין של חוף הים התיכון...';
+    let i=0;const iv=setInterval(()=>{if(i<t.length)el.textContent+=t[i++];else clearInterval(iv);},42);
+  }
+}
+function reset(){if(tmr)clearTimeout(tmr);tmr=setTimeout(()=>{if(cur<N-1)go(cur+1);},7500);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'||e.key==='ArrowDown')go(cur+1);
+  else if(e.key==='ArrowRight'||e.key==='ArrowUp')go(cur-1);
+  else if(e.key==='Escape')go(0);
+});
+reset();
+</script>
+</body>
+</html>

@@ -38,7 +38,7 @@ const INST_PATTERN = new RegExp(
 )
 function highlightInstructions(text: string): string {
   if (!text) return ''
-  return text.replace(INST_PATTERN, '<strong style="color:#1565C0;font-weight:800">$1</strong>')
+  return text.replace(INST_PATTERN, '<strong style="color:#16a34a;font-weight:800">$1</strong>')
 }
 
 // ─── Non-continuous text types ─────────────────────────────────────────────
@@ -304,8 +304,8 @@ export default function TakeExam() {
   ]
 
   // Colorful accent per section
-  const SECTION_COLORS = ['#1565C0', '#0e7490', '#7C3AED']
-  const currentAccent = SECTION_COLORS[section] || '#1565C0'
+  const SECTION_COLORS = ['#16a34a', '#0e7490', '#7C3AED']
+  const currentAccent = SECTION_COLORS[section] || '#16a34a'
 
   return (
     <div
@@ -399,7 +399,7 @@ export default function TakeExam() {
         <SectionView
           text={narrText}
           textLabel="טקסט נרטיבי"
-          accentColor="#1565C0"
+          accentColor="#16a34a"
           questions={narrQuestions}
           answers={answers}
           setAnswers={setAnswers}
@@ -707,7 +707,7 @@ function CrossTextSection({
         {/* Tabs */}
         <div style={{ display: 'flex', borderBottom: '1px solid #e5e7eb' }}>
           {([
-            { key: 'narrative' as const,     label: 'טקסט נרטיבי',  color: '#1565C0' },
+            { key: 'narrative' as const,     label: 'טקסט נרטיבי',  color: '#16a34a' },
             { key: 'informational' as const,  label: 'טקסט מידעי',   color: '#0e7490' },
           ]).map(tab => (
             <button
@@ -794,7 +794,7 @@ function CrossTextSection({
 
         <div style={{ paddingTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <p style={{ fontSize: '13px', textAlign: 'center', color: '#6b7280' }}>
-            ענית על <strong style={{ color: '#1565C0' }}>{answered}</strong> מתוך {total} שאלות בסך הכל
+            ענית על <strong style={{ color: '#16a34a' }}>{answered}</strong> מתוך {total} שאלות בסך הכל
           </p>
           <button
             onClick={onSubmit}

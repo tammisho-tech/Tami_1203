@@ -504,7 +504,7 @@ function StudentPreview({
     }}>
       {/* Student header bar */}
       <div style={{
-        background: 'linear-gradient(135deg, #1565C0 0%, #7B1FA2 50%, #D81B60 100%)',
+        background: 'linear-gradient(135deg, #16a34a 0%, #7B1FA2 50%, #D81B60 100%)',
         borderRadius: '16px',
         padding: '18px 24px',
         marginBottom: '24px',
@@ -535,10 +535,10 @@ function StudentPreview({
           text={narrText}
           questions={narrQs}
           label="טקסט נרטיבי"
-          gradient="linear-gradient(135deg, #1565C0, #1E88E5)"
+          gradient="linear-gradient(135deg, #16a34a, #22c55e)"
           bg="#eff6ff"
           questionBg="#dbeafe"
-          accentColor="#1565C0"
+          accentColor="#16a34a"
         />
       )}
       {infoText && (

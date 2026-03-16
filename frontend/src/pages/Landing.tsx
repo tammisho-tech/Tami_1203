@@ -17,7 +17,7 @@ export default function Landing() {
         />
         <div
           className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
-          style={{ background: 'linear-gradient(135deg, #1565C0, #2D3EA0)' }}
+          style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)' }}
         >
           <BookOpen size={32} className="text-white" />
         </div>
@@ -30,7 +30,7 @@ export default function Landing() {
         <button
           onClick={() => navigate('/teacher/new-exam')}
           className="flex items-center justify-center gap-3 text-white text-lg font-bold px-8 py-4 rounded-2xl shadow-lg transition-all hover:shadow-xl hover:-translate-y-0.5"
-          style={{ background: 'linear-gradient(135deg, #1565C0, #2D3EA0)' }}
+          style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)' }}
         >
           <Plus size={22} />
           מבחן חדש
@@ -38,7 +38,7 @@ export default function Landing() {
 
         <button
           onClick={() => navigate('/dashboard')}
-          className="flex items-center justify-center gap-3 text-blue-800 text-lg font-bold px-8 py-4 rounded-2xl border-2 border-blue-200 bg-white shadow hover:bg-blue-50 transition-all hover:-translate-y-0.5"
+          className="flex items-center justify-center gap-3 text-green-800 text-lg font-bold px-8 py-4 rounded-2xl border-2 border-green-200 bg-white shadow hover:bg-green-50 transition-all hover:-translate-y-0.5"
         >
           <Library size={22} />
           ספריית מבחנים
