@@ -275,7 +275,7 @@ export default function NewExam() {
                 יש לבחור כיתה תחילה כדי לראות נושאים מותאמים לגיל
               </div>
             ) : (
-              <div className="border border-gray-200 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
+              <div className="border border-gray-200 rounded-xl p-3 max-h-72 overflow-y-auto space-y-1">
                 {topicOptions.map((opt, i) => (
                   <label key={`${selectedGrade?.cluster}-${i}-${opt}`} className="flex items-center gap-2 cursor-pointer py-1 hover:bg-gray-50 rounded px-1">
                     <input
