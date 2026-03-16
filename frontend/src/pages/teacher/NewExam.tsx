@@ -275,9 +275,7 @@ export default function NewExam() {
                 יש לבחור כיתה תחילה כדי לראות נושאים מותאמים לגיל
               </div>
             ) : (
-              <>
-                <p className="text-xs text-gray-500 mb-1">{topicOptions.length} נושאים — גלול למטה לראות את כולם</p>
-                <div className="border border-gray-200 rounded-xl p-3 max-h-80 overflow-y-auto space-y-1">
+              <div className="border border-gray-200 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
                 {topicOptions.map((opt, i) => (
                   <label key={`${selectedGrade?.cluster}-${i}-${opt}`} className="flex items-center gap-2 cursor-pointer py-1 hover:bg-gray-50 rounded px-1">
                     <input
@@ -290,7 +288,6 @@ export default function NewExam() {
                   </label>
                 ))}
               </div>
-              </>
             )}
             {form.topic && form.topic !== 'אישיים' && (
               <p className="text-xs text-blue-600 mt-1">נבחר: {form.topic}</p>
