@@ -11,8 +11,8 @@ export default {
       colors: {
         rama: {
           teal:   '#00B5CC',
-          blue:   '#1565C0',
-          indigo: '#2D3EA0',
+          blue:   '#16a34a',
+          indigo: '#15803d',
           deep:   '#1A2D7A',
           light:  '#E8F4FD',
         },

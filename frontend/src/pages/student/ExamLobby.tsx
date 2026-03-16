@@ -35,11 +35,11 @@ export default function ExamLobby() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-green-50 px-4">
       <div className="w-full max-w-md space-y-6">
         {/* Logo */}
         <div className="text-center">
-          <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+          <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
             <BookOpen size={32} className="text-white" />
           </div>
           <h1 className="text-2xl font-bold">מבחן הבנת הנקרא</h1>

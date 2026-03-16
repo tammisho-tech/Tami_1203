@@ -16,7 +16,7 @@ const CLUSTER_LABEL: Record<string, string> = {
   '3-4': 'כיתות ג׳–ד׳', '5-6': 'כיתות ה׳–ו׳', '7-9': 'כיתות ז׳–ט׳',
 }
 const CLUSTER_COLOR: Record<string, string> = {
-  '3-4': '#0D7377', '5-6': '#1565C0', '7-9': '#4527A0',
+  '3-4': '#0D7377', '5-6': '#16a34a', '7-9': '#4527A0',
 }
 
 function sortExams(exams: Exam[]): Exam[] {
@@ -82,7 +82,7 @@ function ExamCard({ exam }: { exam: Exam }) {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
-  const clusterColor = CLUSTER_COLOR[exam.grade_cluster] || '#1565C0'
+  const clusterColor = CLUSTER_COLOR[exam.grade_cluster] || '#16a34a'
   const grade = exam.topic_values?.grade
   const timing = exam.topic_values?.exam_timing
   const narrTitle = exam.text_titles?.narrative
@@ -208,7 +208,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* RAMA header — no duplicate button */}
-      <header className="w-full text-white" style={{ background: 'linear-gradient(to left, #2D3EA0, #1565C0, #00B5CC)' }}>
+      <header className="w-full text-white" style={{ background: 'linear-gradient(to left, #15803d, #16a34a, #00B5CC)' }}>
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-5">
             <img
@@ -232,7 +232,7 @@ export default function Home() {
           <button
             onClick={() => navigate('/teacher/new-exam')}
             className="flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl text-white"
-            style={{ background: 'linear-gradient(135deg, #1565C0, #2D3EA0)' }}
+            style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)' }}
           >
             <Plus size={14} /> מבחן חדש
           </button>
@@ -241,15 +241,15 @@ export default function Home() {
         {isLoading ? (
           <Spinner text="טוען מבחנים..." />
         ) : exams.length === 0 ? (
-          <div className="rounded-2xl border-2 border-dashed text-center py-16 px-8" style={{ borderColor: '#1565C030', background: 'linear-gradient(135deg, #E8F4FD, #EEF2FF)' }}>
-            <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #00B5CC22, #1565C022)' }}>
-              <BookOpen size={32} style={{ color: '#1565C0' }} />
+          <div className="rounded-2xl border-2 border-dashed text-center py-16 px-8" style={{ borderColor: '#16a34a30', background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)' }}>
+            <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #00B5CC22, #16a34a22)' }}>
+              <BookOpen size={32} style={{ color: '#16a34a' }} />
             </div>
             <p className="text-gray-500 mb-6 text-lg">עדיין אין מבחנים.</p>
             <button
               onClick={() => navigate('/teacher/new-exam')}
               className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-semibold"
-              style={{ background: 'linear-gradient(135deg, #1565C0, #2D3EA0)' }}
+              style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)' }}
             >
               <Plus size={18} /> צרי את המבחן הראשון
             </button>
@@ -277,7 +277,7 @@ export default function Home() {
         )}
 
         <div className="border-t border-gray-200 pt-5 text-center">
-          <Link to="/student" className="text-sm font-medium hover:underline" style={{ color: '#1565C0' }}>
+          <Link to="/student" className="text-sm font-medium hover:underline" style={{ color: '#16a34a' }}>
             כניסה לתלמיד (פתרון מבחן)
           </Link>
         </div>
